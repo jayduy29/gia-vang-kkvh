@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tra cứu giá vàng — Kim Khánh Việt Hùng</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+        onerror="(function(){var s=document.createElement('script');s.src='https://unpkg.com/chart.js@4.4.1/dist/chart.umd.js';document.head.appendChild(s);})()"></script>
+<style>
+  :root{
+    --bg:#0b1020; --panel:#121a30; --panel2:#0f1628; --line:#243052;
+    --txt:#e8ecf7; --muted:#93a0c0; --gold:#e9b949; --gold2:#f5d576;
+    --blue:#4ea8ff; --green:#38d39f; --red:#ff6b6b; --purple:#b18cff;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:radial-gradient(1200px 600px at 80% -10%, #1b2447 0%, var(--bg) 55%);
+    color:var(--txt);
+    font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:15px; line-height:1.5; padding-bottom:40px;
+  }
+  a{color:var(--gold2)}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
+
+  header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0 14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{
+    width:52px;height:52px;border-radius:14px;flex:none;
+    background:linear-gradient(145deg,var(--gold),#a97b1f);
+    color:#221a05;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:20px;box-shadow:0 8px 24px rgba(233,185,73,.28)
+  }
+  h1{font-size:22px;margin:0;letter-spacing:.2px}
+  .sub{margin:3px 0 0;color:var(--muted);font-size:13px}
+  .badge{
+    background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:8px 14px;font-size:13px;color:var(--muted);max-width:520px
+  }
+  .badge b{color:var(--gold2)}
+
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
+  .spacer{flex:1}
+  .btn{
+    border:1px solid var(--line);background:var(--panel);color:var(--txt);
+    padding:9px 15px;border-radius:10px;font-size:14px;cursor:pointer;transition:.15s;
+    display:inline-flex;align-items:center;gap:7px
+  }
+  .btn:hover{border-color:#3a4a7d;background:#182243}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.primary{background:linear-gradient(145deg,var(--gold),#c9931f);border-color:transparent;color:#241a04;font-weight:700}
+  .btn.primary:hover{filter:brightness(1.07);background:linear-gradient(145deg,var(--gold),#c9931f)}
+  .btn.ghost{background:transparent}
+  .btn.danger2{color:#ff9b9b;border-color:#5b2b34}
+  .btn.danger2:hover{background:#3a1a22}
+  .btn.small{padding:6px 11px;font-size:13px}
+
+  .status{
+    border:1px solid var(--line);background:var(--panel2);border-radius:10px;
+    padding:10px 14px;font-size:14px;color:var(--muted);margin-bottom:14px
+  }
+  .status.ok{border-color:#1f5c46;color:#9df0d3;background:#0e2620}
+  .status.err{border-color:#6d2a2a;color:#ffb3b3;background:#2a1214}
+  .status.run{border-color:#5c4a1f;color:#ffe6a8;background:#261f0e}
+  .progress{height:6px;background:#1a2340;border-radius:6px;overflow:hidden;margin:-6px 0 14px}
+  .progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:.25s}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+  .card .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+  .card .v{font-size:21px;font-weight:700;margin-top:6px;word-break:break-all}
+  .card .d{font-size:12px;color:var(--muted);margin-top:4px}
+  .up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--muted)}
+
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:16px}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+  .panel h2{font-size:16px;margin:0}
+  .muted{color:var(--muted);font-size:13px}
+  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  select{
+    background:#0d1428;color:var(--txt);border:1px solid var(--line);
+    border-radius:9px;padding:7px 10px;font-size:14px;max-width:320px
+  }
+  .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chip{
+    border:1px solid var(--line);background:#0d1428;color:var(--muted);
+    padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;transition:.15s
+  }
+  .chip:hover{border-color:#3a4a7d;color:var(--txt)}
+  .chip.active{background:#22305b;border-color:#3f5bab;color:#dbe7ff}
+  .chip.active.buy{background:#123653;border-color:#2b6ea8;color:#a9dcff}
+  .chip.active.sell{background:#3d3211;border-color:#8a6f21;color:#ffe6a3}
+  .chip.active.convert{background:#2c2247;border-color:#5c48a0;color:#ddceff}
+  .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
+
+  .chart-wrap{position:relative;height:380px}
+  .empty{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    color:var(--muted);font-size:14px;text-align:center;padding:20px
+  }
+
+  .table-wrap{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{
+    position:sticky;top:0;background:#16203c;color:#cbd6f2;text-align:left;
+    padding:9px 12px;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;z-index:1
+  }
+  tbody td{padding:8px 12px;border-top:1px solid #1c2647}
+  tbody tr:hover{background:#151e39}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  tr.group-row td{background:#101a33;color:var(--gold2);font-weight:700;font-size:13px;letter-spacing:.4px}
+  .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;border:1px solid}
+  .tag.live{color:#9df0d3;border-color:#1f5c46;background:#0e2620}
+  .tag.wb{color:#ddceff;border-color:#4b3b86;background:#1c1733}
+
+  details.log summary{cursor:pointer;font-weight:600;font-size:15px}
+  #logList{list-style:none;margin:12px 0 0;padding:0;max-height:240px;overflow:auto;font-size:13px}
+  #logList li{padding:5px 0;border-top:1px dashed #22305a;color:var(--muted)}
+  #logList li b{color:var(--gold2);font-weight:600}
+
+  footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
+  footer ul{margin:8px 0 0;padding-left:20px}
+  @media (max-width:640px){
+    h1{font-size:18px} .chart-wrap{height:300px} .badge{max-width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <div class="logo">Au</div>
+      <div>
+        <h1>Tra cứu giá vàng — Kim Khánh Việt Hùng</h1>
+        <p class="sub">Nguồn: <a href="https://kimkhanhviethung.vn/tra-cuu-gia-vang.html" target="_blank" rel="noopener">kimkhanhviethung.vn/tra-cuu-gia-vang.html</a> · Đơn vị: Đồng/chỉ</p>
+      </div>
+    </div>
+    <div class="badge" id="storeBadge">Chưa có dữ liệu</div>
+  </header>
+
+  <section class="toolbar">
+    <button class="btn primary" id="btnFetch">⟳ Cập nhật ngay</button>
+    <button class="btn" id="btnBackfill">⤓ Tải lịch sử 1 năm (Wayback)</button>
+    <button class="btn danger2" id="btnStop" disabled>■ Dừng</button>
+    <span class="spacer"></span>
+    <button class="btn ghost" id="btnCsv">Xuất CSV</button>
+    <button class="btn ghost" id="btnBackup">Sao lưu JSON</button>
+    <label class="btn ghost">Nhập JSON<input type="file" id="fileImport" accept="application/json,.json" hidden></label>
+    <button class="btn ghost danger2" id="btnClear">Xóa dữ liệu</button>
+  </section>
+
+  <div class="status" id="status">Sẵn sàng. Đang kiểm tra giá mới…</div>
+  <div class="progress" id="progress" hidden><div id="progressBar"></div></div>
+
+  <section class="cards" id="stats"></section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Biểu đồ giá vàng</h2>
+      <div class="controls">
+        <select id="typeSelect" title="Chọn loại vàng"></select>
+        <div class="chips" id="seriesChips">
+          <button class="chip buy active" data-series="buy">Mua vào</button>
+          <button class="chip sell active" data-series="sell">Bán ra</button>
+          <button class="chip convert" data-series="convert">Giá quy đổi</button>
+        </div>
+        <div class="chips" id="rangeChips">
+          <button class="chip" data-range="30">1 tháng</button>
+          <button class="chip" data-range="90">3 tháng</button>
+          <button class="chip" data-range="180">6 tháng</button>
+          <button class="chip active" data-range="365">1 năm</button>
+          <button class="chip" data-range="all">Tất cả</button>
+        </div>
+        <label class="check"><input type="checkbox" id="ffill" checked> Kéo giá các ngày chưa có dữ liệu</label>
+      </div>
+    </div>
+    <div class="chart-wrap">
+      <canvas id="chart"></canvas>
+      <div class="empty" id="chartEmpty" hidden>Chưa có dữ liệu để vẽ biểu đồ.<br>Nhấn <b>“Cập nhật ngay”</b> hoặc <b>“Tải lịch sử 1 năm”</b>.</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Bảng giá mới nhất</h2>
+      <span class="muted" id="latestInfo"></span>
+    </div>
+    <div class="table-wrap"><table id="currentTable"><tbody></tbody></table></div>
+  </section>
+
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Lịch sử theo ngày</h2>
+      <span class="muted" id="histInfo"></span>
+    </div>
+    <div class="table-wrap"><table id="historyTable">
+      <thead><tr>
+        <th>Ngày</th><th class="num">Mua vào</th><th class="num">Bán ra</th><th class="num">Giá quy đổi</th>
+        <th>Cập nhật từ nguồn</th><th>Nguồn</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table></div>
+  </section>
+
+  <details class="panel log">
+    <summary>Nhật ký hoạt động</summary>
+    <ul id="logList"></ul>
+  </details>
+
+  <footer>
+    <b>Cách hoạt động:</b>
+    <ul>
+      <li><b>Dữ liệu chung lưu tại <code>data/gold.json</code> trong repo GitHub</b> — GitHub Action scrape bảng giá mỗi ngày lúc 14:00 (giờ VN) rồi commit; ai mở web cũng thấy cùng một dữ liệu, không phụ thuộc trình duyệt.</li>
+      <li>Khi bạn mở trang, app tải <code>data/gold.json</code> rồi gộp với bản ghi cục bộ (localStorage). Nút <b>“Cập nhật ngay”</b> chỉ ghi thêm vào máy bạn (dự phòng khi Action chưa chạy); app còn tự kiểm tra mỗi 15 phút khi trang đang mở.</li>
+      <li>Dữ liệu 1 năm qua lấy từ kho Wayback Machine: bấm nút <b>“Tải lịch sử 1 năm”</b> trong trang, hoặc chạy Action thủ công với input <code>backfill</code> (chạy trên máy GitHub, không vướng CORS). Chạy lại bao nhiêu lần cũng được — ngày đã có sẽ bỏ qua.</li>
+      <li>Giá website mang tính tham khảo, giao dịch theo bảng giá niêm yết tại cửa hàng.</li>
+    </ul>
+  </footer>
+</div>
+
+<script>
+/* ================= CẤU HÌNH ================= */
+const SITE_URL = 'https://kimkhanhviethung.vn/tra-cuu-gia-vang.html';
+/* Dữ liệu chung (mọi người xem giống nhau) — do GitHub Action ghi mỗi ngày 14:00 */
+const REMOTE_DATA = 'data/gold.json';
+const STORE_KEY = 'kkvh_gold_snapshots_v1';
+const META_KEY  = 'kkvh_gold_meta_v1';
+const SERIES_META = {
+  buy:    {label:'Mua vào',     color:'#4ea8ff'},
+  sell:   {label:'Bán ra',      color:'#e9b949'},
+  convert:{label:'Giá quy đổi', color:'#b18cff'}
+};
+
+/* Chuỗi proxy: thử lần lượt khi bị CORS chặn (đã test: allorigins + corsfix hoạt động) */
+const PROXIES = [
+  u => u,                                                              // trực tiếp
+  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+  u => 'https://proxy.corsfix.com/?' + u,
+  u => 'https://api.allorigins.win/get?url=' + encodeURIComponent(u)   // JSON wrapper
+];
+
+/* ================= STATE ================= */
+const state = {
+  snapshots: {},          // "YYYY-MM-DD" -> {date, sourceUpdatedAt, fetchedAt, origin, items[]}
+  meta: {},
+  type: null,             // "group||name"
+  active: new Set(['buy','sell']),
+  range: 365,
+  fill: true,
+  chart: null,
+  chartDates: [],
+  stopFlag: false,
+  busy: false,
+  logs: []
+};
+
+/* ================= UTIL ================= */
+const $ = s => document.querySelector(s);
+const pad = n => String(n).padStart(2,'0');
+const toKey = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const todayKey = () => toKey(new Date());
+const parseKey = k => { const [y,m,d]=k.split('-').map(Number); return new Date(y, m-1, d); };
+const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+const fmtDmy = k => { const d=parseKey(k); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`; };
+const fmtShort = k => { const d=parseKey(k); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}`; };
+const money = v => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toLocaleString('vi-VN') + ' đ';
+const compact = v => (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:2}) + ' tr';
+const delay = ms => new Promise(r=>setTimeout(r,ms));
+const norm = s => (s||'').replace(/\s+/g,' ').trim();
+const num = el => { const t=(el.textContent||'').replace(/[^\d]/g,''); return t?parseInt(t,10):0; };
+const dmyToIso = s => { const m=(s||'').match(/(\d{2})\/(\d{2})\/(\d{4})/); return m?`${m[3]}-${m[2]}-${m[1]}`:null; };
+
+function loadStore(){
+  try{ state.snapshots = JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }catch(e){ state.snapshots = {}; }
+  try{ state.meta = JSON.parse(localStorage.getItem(META_KEY)) || {}; }catch(e){ state.meta = {}; }
+}
+/* Tải dữ liệu chung từ máy chủ (data/gold.json do GitHub Action cập nhật mỗi ngày)
+   và gộp vào bộ nhớ cục bộ: bản nào mới hơn (fetchedAt) thắng. */
+async function loadRemote(){
+  try{
+    const res = await fetch(REMOTE_DATA + '?t=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    const snaps = (data && data.snapshots && typeof data.snapshots === 'object') ? data.snapshots : data;
+    let added = 0, updated = 0;
+    Object.keys(snaps || {}).forEach(k=>{
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(k) || !snaps[k] || !Array.isArray(snaps[k].items)) return;
+      const old = state.snapshots[k];
+      if(!old){ state.snapshots[k] = snaps[k]; added++; }
+      else if(String(snaps[k].fetchedAt||'') > String(old.fetchedAt||'')){ state.snapshots[k] = snaps[k]; updated++; }
+    });
+    saveStore();
+    return {ok:true, added, updated, total:sortedKeys().length};
+  }catch(e){
+    return {ok:false, error:e.message};
+  }
+}
+function saveStore(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(state.snapshots)); return true; }
+  catch(e){ setStatus('Lỗi lưu dữ liệu: '+e.message, 'err'); return false; }
+}
+function saveMeta(){ try{ localStorage.setItem(META_KEY, JSON.stringify(state.meta)); }catch(e){} }
+const sortedKeys = () => Object.keys(state.snapshots).sort();
+const latestKey = () => { const k=sortedKeys(); return k.length?k[k.length-1]:null; };
+
+function setStatus(msg, cls){
+  const el = $('#status');
+  el.textContent = msg;
+  el.className = 'status' + (cls?(' '+cls):'');
+}
+function log(msg){
+  const t = new Date().toLocaleTimeString('vi-VN');
+  state.logs.unshift({t, msg});
+  state.logs = state.logs.slice(0,80);
+  $('#logList').innerHTML = state.logs.map(l=>`<li><b>${l.t}</b> — ${l.msg}</li>`).join('');
+}
+function setBusy(b){
+  state.busy = b;
+  $('#btnFetch').disabled = b;
+  $('#btnBackfill').disabled = b;
+  $('#btnStop').disabled = !b;
+}
+
+/* ================= FETCH QUA PROXY ================= */
+async function fetchWithTimeout(url, ms){
+  const ctrl = new AbortController();
+  const timer = setTimeout(()=>ctrl.abort(), ms);
+  try{ return await fetch(url, {signal: ctrl.signal}); }
+  finally{ clearTimeout(timer); }
+}
+async function fetchText(url){
+  const errs = [];
+  for(let i=0;i<PROXIES.length;i++){
+    const target = PROXIES[i](url);
+    try{
+      const res = await fetchWithTimeout(target, i===0?15000:30000);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      let text = await res.text();
+      // allorigins /get trả về JSON bọc {contents: "..."} — bóc ra
+      if(text.trim().startsWith('{"contents"')){
+        try{ const j = JSON.parse(text.trim()); if(typeof j.contents==='string') text = j.contents; }catch(e){}
+      }
+      if(text && text.length > 400) return text;
+      throw new Error('phản hồi rỗng/quá ngắn');
+    }catch(e){
+      errs.push(`${i===0?'trực tiếp':'proxy'+i}: ${e.message}`);
+    }
+  }
+  if(url.includes('web.archive.org')){
+    throw new Error('không kết nối được Internet Archive (có thể đang tạm ngừng hoạt động hoặc chặn CORS) — ' + errs.join(' | '));
+  }
+  throw new Error(errs.join(' | '));
+}
+
+/* ================= PARSE BẢNG GIÁ ================= */
+function parseGoldPage(html){
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  let sourceUpdatedAt = null;
+  doc.querySelectorAll('.sub_tieude_gc, b').forEach(el=>{
+    const t = el.textContent || '';
+    if(/Ngày cập nhật/i.test(t)){
+      const m = t.match(/\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}/);
+      if(m) sourceUpdatedAt = m[0];
+    }
+  });
+  const table = doc.querySelector('.table_goldprice table') || doc.querySelector('table');
+  const items = [];
+  if(table){
+    let group = '';
+    table.querySelectorAll('tr').forEach(tr=>{
+      const th = tr.querySelector('th');
+      if(th){ const g = norm(th.textContent); if(g){ group = g; } return; }
+      const tds = tr.querySelectorAll('td');
+      if(tds.length >= 3){
+        const name = norm(tds[0].textContent);
+        if(!name) return;
+        items.push({
+          group: group || 'Khác',
+          name,
+          buy: num(tds[1]),
+          sell: tds[2] ? num(tds[2]) : 0,
+          convert: tds[3] ? num(tds[3]) : 0
+        });
+      }
+    });
+  }
+  return {sourceUpdatedAt, items};
+}
+
+/* ================= LẤY GIÁ HIỆN TẠI ================= */
+async function fetchLive(){
+  setBusy(true);
+  setStatus('Đang lấy bảng giá hiện tại từ kimkhanhviethung.vn …', 'run');
+  log('Bắt đầu lấy giá trực tiếp…');
+  try{
+    const html = await fetchText(SITE_URL);
+    const parsed = parseGoldPage(html);
+    if(!parsed.items.length) throw new Error('không parse được bảng giá (phản hồi khác mong đợi)');
+    const key = (parsed.sourceUpdatedAt && dmyToIso(parsed.sourceUpdatedAt)) || todayKey();
+    state.snapshots[key] = {
+      date: key,
+      sourceUpdatedAt: parsed.sourceUpdatedAt,
+      fetchedAt: new Date().toISOString(),
+      origin: 'live',
+      items: parsed.items
+    };
+    saveStore();
+    state.meta.lastFetchAt = Date.now();
+    saveMeta();
+    setStatus(`✓ Đã cập nhật: giá ngày ${fmtDmy(key)} — ${parsed.items.length} loại (nguồn cập nhật ${parsed.sourceUpdatedAt || 'không rõ'}).`, 'ok');
+    log(`Cập nhật OK: ${key}, ${parsed.items.length} loại`);
+    renderAll();
+  }catch(e){
+    setStatus('✗ Cập nhật thất bại: ' + e.message, 'err');
+    log('Lỗi cập nhật: ' + e.message);
+  }finally{
+    setBusy(false);
+  }
+}
+
+async function autoFetch(){
+  if(state.busy) return;
+  const last = state.meta.lastFetchAt || 0;
+  if(Date.now() - last > 6*3600*1000){
+    await fetchLive();
+  }else{
+    const k = latestKey();
+    setStatus(k
+      ? `✓ Đã có giá ngày ${fmtDmy(k)} (lấy trong vòng 6 giờ qua). Bấm “Cập nhật ngay” để lấy lại bất cứ lúc nào.`
+      : 'Sẵn sàng. Bấm “Cập nhật ngay” để lấy bảng giá mới nhất.', 'ok');
+  }
+}
+
+/* ================= BACKFILL WAYBACK ================= */
+async function backfill(){
+  if(state.busy) return;
+  state.stopFlag = false;
+  setBusy(true);
+  $('#progress').hidden = false;
+  setStatus('Đang truy vấn danh sách bản lưu trên Wayback Machine …', 'run');
+  log('Bắt đầu backfill Wayback…');
+  try{
+    const from = toKey(addDays(new Date(), -366)).replace(/-/g,'');
+    const to   = toKey(new Date()).replace(/-/g,'');
+    const cdx = 'https://web.archive.org/cdx/search/cdx?url=' + encodeURIComponent(SITE_URL)
+      + '&output=json&fl=timestamp&filter=statuscode:200'
+      + '&from=' + from + '&to=' + to + '&collapse=timestamp:8&limit=400';
+    const txt = await fetchText(cdx);
+    if(/Temporarily Offline|<html|<!doctype/i.test(txt))
+      throw new Error('Internet Archive đang tạm ngừng hoạt động — thử lại sau ít giờ.');
+    const arr = JSON.parse(txt.trim());
+    const stamps = arr.slice(1).map(r=>r[0]).filter(Boolean);
+    if(!stamps.length){ setStatus('Wayback không có bản lưu nào cho trang này trong 1 năm qua.', 'err'); setBusy(false); $('#progress').hidden=true; return; }
+
+    let done = 0, added = 0, skipped = 0, failed = 0;
+    setStatus(`Tìm thấy ${stamps.length} bản lưu. Đang tải về (những ngày đã có dữ liệu sẽ bỏ qua)…`, 'run');
+    log(`Wayback: ${stamps.length} bản lưu`);
+
+    for(const ts of stamps){
+      if(state.stopFlag){ setStatus('Đã dừng backfill theo yêu cầu.', 'ok'); log('Dừng backfill'); break; }
+      done++;
+      const wbDate = `${ts.slice(0,4)}-${ts.slice(4,6)}-${ts.slice(6,8)}`;
+      if(state.snapshots[wbDate]){ skipped++; }
+      else{
+        try{
+          const snapUrl = `https://web.archive.org/web/${ts}id_/${SITE_URL}`;
+          const html = await fetchText(snapUrl);
+          const parsed = parseGoldPage(html);
+          if(parsed.items.length){
+            const key = (parsed.sourceUpdatedAt && dmyToIso(parsed.sourceUpdatedAt)) || wbDate;
+            if(!state.snapshots[key]){
+              state.snapshots[key] = {
+                date: key,
+                sourceUpdatedAt: parsed.sourceUpdatedAt,
+                fetchedAt: new Date().toISOString(),
+                waybackTs: ts,
+                origin: 'wayback',
+                items: parsed.items
+              };
+              added++;
+              saveStore();
+            } else skipped++;
+          } else { failed++; }
+        }catch(e){
+          failed++;
+          log(`Bản lưu ${wbDate} lỗi: ${e.message}`);
+          if(/Internet Archive|temporarily|failed to fetch|networkerror/i.test(e.message)){
+            setStatus('✗ Không tải được dữ liệu từ Internet Archive (kho lưu trữ có thể đang tạm ngừng). Bạn cứ bấm lại nút này sau — dữ liệu đã có sẽ không bị ghi đè.', 'err');
+            log('Dừng backfill do lỗi kết nối Internet Archive');
+            break;
+          }
+        }
+        await delay(600);
+      }
+      $('#progressBar').style.width = Math.round(done/stamps.length*100) + '%';
+      if(done % 10 === 0 || done === stamps.length){
+        setStatus(`Đang tải lịch sử: ${done}/${stamps.length} bản lưu · thêm mới ${added} · bỏ qua ${skipped} · lỗi ${failed}`, 'run');
+      }
+    }
+    $('#progressBar').style.width = '100%';
+    renderAll();
+    if(!state.stopFlag){
+      setStatus(`✓ Hoàn tất backfill: +${added} ngày mới (bỏ qua ${skipped}, lỗi ${failed}). Tổng ${sortedKeys().length} ngày có dữ liệu.`, 'ok');
+      log(`Backfill xong: +${added}`);
+    }
+    setTimeout(()=>{ $('#progress').hidden = true; $('#progressBar').style.width='0'; }, 1200);
+  }catch(e){
+    setStatus('✗ Chưa tải được lịch sử: ' + e.message +
+      ' — Kho lưu trữ Wayback có thể đang tạm ngừng; hãy thử lại sau ít giờ (bấm lại bao nhiêu lần cũng được, ngày đã có dữ liệu sẽ bỏ qua).', 'err');
+    log('Lỗi backfill: ' + e.message);
+    $('#progress').hidden = true;
+  }finally{
+    setBusy(false);
+  }
+}
+
+/* ================= LOẠI VÀNG ================= */
+function allTypes(){
+  const map = new Map();
+  sortedKeys().forEach(k=>{
+    state.snapshots[k].items.forEach(it=>{
+      const key = it.group + '||' + it.name;
+      if(!map.has(key)) map.set(key, {group: it.group, name: it.name});
+    });
+  });
+  return [...map.values()];
+}
+function itemOf(snap, typeKey){
+  if(!snap) return null;
+  const [g,n] = typeKey.split('||');
+  return snap.items.find(i=>i.group===g && i.name===n) || null;
+}
+function valOf(item, series){
+  if(!item) return null;
+  const v = item[series];
+  return (v===null || v===undefined || v===0) ? null : v;   // 0 = không có dữ liệu
+}
+function buildTypeSelect(){
+  const sel = $('#typeSelect');
+  const types = allTypes();
+  const groups = new Map();
+  types.forEach(t=>{
+    if(!groups.has(t.group)) groups.set(t.group, []);
+    groups.get(t.group).push(t);
+  });
+  sel.innerHTML = '';
+  groups.forEach((list, g)=>{
+    const og = document.createElement('optgroup');
+    og.label = g;
+    list.forEach(t=>{
+      const key = t.group + '||' + t.name;
+      const o = document.createElement('option');
+      o.value = key; o.textContent = t.name;
+      og.appendChild(o);
+    });
+    sel.appendChild(og);
+  });
+  if(!state.type || !types.some(t=>t.group+'||'+t.name===state.type)){
+    const first = types.find(t=>/999\.9|24K|Nhẫn Khâu 98/i.test(t.name)) || types[0];
+    state.type = first ? first.group+'||'+first.name : null;
+  }
+  sel.value = state.type || '';
+  sel.disabled = !types.length;
+}
+
+/* ================= BIỂU ĐỒ ================= */
+function rangeKeys(){
+  const keys = sortedKeys();
+  if(state.range === 'all') return keys;
+  const start = addDays(new Date(), -state.range);
+  return keys.filter(k => parseKey(k) >= start);
+}
+function buildSeries(){
+  const keys = rangeKeys();
+  if(!keys.length) return {labels:[], dates:[], datasets:[]};
+  // Nếu dữ liệu trong khoảng chọn rất ít, chỉ vẽ từ ngày có dữ liệu đầu tiên
+  const start = (state.range==='all' || keys.length<=5) ? parseKey(keys[0]) : addDays(new Date(), -state.range);
+  const last = parseKey(todayKey());
+  const labels = [], dates = [];
+  const order = ['buy','sell','convert'].filter(s=>state.active.has(s));
+  const raw = {};
+  order.forEach(s=> raw[s]=[]);
+
+  for(let d=new Date(start); d<=last; d=addDays(d,1)){
+    const k = toKey(d);
+    labels.push(fmtShort(k));
+    dates.push(k);
+    const item = itemOf(state.snapshots[k], state.type);
+    order.forEach(s=> raw[s].push(valOf(item, s)));
+  }
+  // forward-fill (kéo giá trị các ngày không có dữ liệu)
+  const datasets = [];
+  order.forEach(s=>{
+    const arr = raw[s].slice();
+    if(state.fill){
+      let lastVal = null;
+      for(let i=0;i<arr.length;i++){
+        if(arr[i]===null){ if(lastVal!==null) arr[i]=lastVal; }
+        else lastVal = arr[i];
+      }
+    }
+    const dots = arr.filter(v=>v!==null).length;
+    datasets.push({
+      label: SERIES_META[s].label,
+      data: arr,
+      borderColor: SERIES_META[s].color,
+      backgroundColor: SERIES_META[s].color + '22',
+      borderWidth: 2,
+      pointRadius: dots<=7 ? 3 : 0,
+      pointHoverRadius: 4,
+      tension: .25,
+      spanGaps: false
+    });
+  });
+  return {labels, dates, datasets};
+}
+function renderChart(){
+  const empty = $('#chartEmpty');
+  if(typeof Chart === 'undefined'){
+    empty.hidden = false;
+    empty.innerHTML = 'Đang tải thư viện biểu đồ (Chart.js)… nếu lâu, kiểm tra kết nối mạng.';
+    setTimeout(renderChart, 1500);
+    return;
+  }
+  const {labels, dates, datasets} = buildSeries();
+  state.chartDates = dates;
+  const hasData = datasets.some(d=>d.data.some(v=>v!==null));
+  empty.hidden = hasData;
+  if(!hasData) empty.innerHTML = 'Chưa có dữ liệu cho lựa chọn hiện tại.<br>Nhấn <b>“Cập nhật ngay”</b> hoặc <b>“Tải lịch sử 1 năm”</b>.';
+
+  const cfg = {
+    type: 'line',
+    data: {labels, datasets},
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {mode:'index', intersect:false},
+      plugins: {
+        legend: {labels: {color:'#cbd6f2', boxWidth:14, usePointStyle:true}},
+        tooltip: {
+          callbacks: {
+            title: items => { const k = state.chartDates[items[0].dataIndex]; return k ? 'Ngày ' + fmtDmy(k) : ''; },
+            label: ctx => ` ${ctx.dataset.label}: ${money(ctx.parsed.y)}`
+          }
+        }
+      },
+      scales: {
+        x: {ticks:{color:'#93a0c0', maxTicksLimit:13, maxRotation:0}, grid:{color:'#1a2340'}},
+        y: {ticks:{color:'#93a0c0', callback:v=>compact(v)}, grid:{color:'#1a2340'}}
+      }
+    }
+  };
+  if(state.chart){ state.chart.destroy(); }
+  state.chart = new Chart($('#chart'), cfg);
+}
+
+/* ================= THỐNG KÊ ================= */
+function renderStats(){
+  const keys = rangeKeys();
+  const seriesList = state.active.size ? [...state.active] : ['sell'];
+  const primary = seriesList.includes('sell') ? 'sell' : seriesList[0];
+  const points = [];
+  keys.forEach(k=>{
+    const item = itemOf(state.snapshots[k], state.type);
+    const v = valOf(item, primary);
+    if(v!==null) points.push({k, v});
+  });
+  const cards = [];
+  const typeName = state.type ? state.type.split('||')[1] : '—';
+
+  if(points.length){
+    const last = points[points.length-1];
+    const prev = points.length>1 ? points[points.length-2] : null;
+    const diff = prev ? last.v - prev.v : null;
+    const pct = (prev && prev.v) ? (diff/prev.v*100) : null;
+    const vals = points.map(p=>p.v);
+    const min = Math.min(...vals), max = Math.max(...vals);
+    const avg = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const cls = diff===null ? 'flat' : (diff>0?'up':(diff<0?'down':'flat'));
+
+    cards.push(card('Giá hiện tại · '+SERIES_META[primary].label, money(last.v), `${typeName} · ngày ${fmtDmy(last.k)}`));
+    cards.push(card('So với lần trước',
+      (diff===null?'—':((diff>0?'+':'') + Number(diff).toLocaleString('vi-VN') + ' đ')),
+      (pct===null?'':((pct>0?'+':'') + pct.toFixed(2) + '%') + ' · trước đó ' + money(prev.v)),
+      cls));
+    cards.push(card('Cao nhất (khoảng chọn)', money(max), `Thấp nhất ${money(min)}`));
+    cards.push(card('Trung bình', money(Math.round(avg)), `Theo ${points.length} ngày có dữ liệu`));
+  }else{
+    cards.push(card('Giá hiện tại · '+SERIES_META[primary].label, '—', 'Chưa có dữ liệu'));
+    cards.push(card('So với lần trước', '—', ''));
+    cards.push(card('Cao nhất (khoảng chọn)', '—', ''));
+    cards.push(card('Trung bình', '—', ''));
+  }
+  cards.push(card('Số ngày có dữ liệu', String(keys.length),
+    state.range==='all' ? 'toàn bộ thời gian' : `${state.range} ngày gần nhất`));
+  $('#stats').innerHTML = cards.join('');
+}
+function card(k, v, d, cls){
+  return `<div class="card"><div class="k">${k}</div><div class="v ${cls||''}">${v}</div><div class="d">${d||''}</div></div>`;
+}
+
+/* ================= BẢNG ================= */
+function renderCurrentTable(){
+  const k = latestKey();
+  const tb = $('#currentTable tbody');
+  if(!k){
+    tb.innerHTML = `<tr><td class="muted" style="padding:18px">Chưa có dữ liệu. Bấm <b>Cập nhật ngay</b>.</td></tr>`;
+    $('#latestInfo').textContent = '';
+    return;
+  }
+  const snap = state.snapshots[k];
+  let html = '';
+  let group = null;
+  snap.items.forEach(it=>{
+    if(it.group !== group){
+      group = it.group;
+      html += `<tr class="group-row"><td colspan="4">${group}</td></tr>`;
+    }
+    const key = it.group + '||' + it.name;
+    html += `<tr${key===state.type?' style="background:#1a2447"':''}>
+      <td>${it.name}</td>
+      <td class="num">${money(it.buy)}</td>
+      <td class="num">${money(it.sell)}</td>
+      <td class="num">${it.convert?money(it.convert):'—'}</td>
+    </tr>`;
+  });
+  tb.innerHTML = html;
+  $('#latestInfo').innerHTML =
+    `Giá ngày <b>${fmtDmy(snap.date)}</b> · nguồn cập nhật: ${snap.sourceUpdatedAt||'—'} · ` +
+    `<span class="tag ${snap.origin==='live'?'live':'wb'}">${snap.origin==='live'?'Trực tiếp':'Wayback'}</span>`;
+}
+function renderHistoryTable(){
+  const keys = rangeKeys().reverse();
+  const tb = $('#historyTable tbody');
+  $('#histInfo').textContent = `${keys.length} ngày · loại: ${state.type?state.type.split('||')[1]:'—'}`;
+  if(!keys.length){
+    tb.innerHTML = `<tr><td colspan="6" class="muted" style="padding:18px">Chưa có dữ liệu trong khoảng này.</td></tr>`;
+    return;
+  }
+  tb.innerHTML = keys.map(k=>{
+    const s = state.snapshots[k];
+    const it = itemOf(s, state.type);
+    return `<tr>
+      <td>${fmtDmy(k)}</td>
+      <td class="num">${it?money(it.buy):'—'}</td>
+      <td class="num">${it?money(it.sell):'—'}</td>
+      <td class="num">${(it&&it.convert)?money(it.convert):'—'}</td>
+      <td class="muted">${s.sourceUpdatedAt||'—'}</td>
+      <td><span class="tag ${s.origin==='live'?'live':'wb'}">${s.origin==='live'?'Trực tiếp':'Wayback'}</span></td>
+    </tr>`;
+  }).join('');
+}
+function renderBadge(){
+  const keys = sortedKeys();
+  const el = $('#storeBadge');
+  if(!keys.length){ el.textContent = 'Chưa có dữ liệu'; return; }
+  const first = keys[0], last = keys[keys.length-1];
+  const lastFetched = state.snapshots[last].fetchedAt
+    ? new Date(state.snapshots[last].fetchedAt).toLocaleString('vi-VN') : '—';
+  el.innerHTML = `Đã lưu <b>${keys.length}</b> ngày · từ <b>${fmtDmy(first)}</b> đến <b>${fmtDmy(last)}</b> · lần lấy gần nhất: ${lastFetched}`;
+}
+function renderAll(){
+  buildTypeSelect();
+  renderBadge();
+  renderStats();
+  renderChart();
+  renderCurrentTable();
+  renderHistoryTable();
+}
+
+/* ================= XUẤT / SAO LƯU / NHẬP / XÓA ================= */
+function exportCsv(){
+  const rows = [['Ngày','Nhóm','Loại vàng','Mua vào','Bán ra','Giá quy đổi','Nguồn','Cập nhật từ nguồn']];
+  sortedKeys().forEach(k=>{
+    const s = state.snapshots[k];
+    s.items.forEach(it=> rows.push([
+      k, it.group, it.name, it.buy, it.sell, it.convert,
+      s.origin==='live'?'Trực tiếp':'Wayback', s.sourceUpdatedAt||''
+    ]));
+  });
+  const csv = '\uFEFF' + rows.map(r=>r.map(c=>`"${String(c===null||c===undefined?'':c).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  download(new Blob([csv], {type:'text/csv;charset=utf-8'}), `gia-vang-kkvh-${toKey(new Date()).replace(/-/g,'')}.csv`);
+  log('Đã xuất CSV');
+}
+function download(blob, name){
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+function backupJson(){
+  const blob = new Blob([JSON.stringify({snapshots: state.snapshots}, null, 2)], {type:'application/json'});
+  download(blob, `gia-vang-kkvh-backup-${toKey(new Date()).replace(/-/g,'')}.json`);
+  log('Đã sao lưu JSON');
+}
+function importJson(file){
+  const rd = new FileReader();
+  rd.onload = () => {
+    try{
+      const obj = JSON.parse(rd.result);
+      const incoming = obj.snapshots || obj;
+      let n = 0;
+      Object.keys(incoming).forEach(k=>{
+        if(/^\d{4}-\d{2}-\d{2}$/.test(k) && incoming[k] && Array.isArray(incoming[k].items)){
+          state.snapshots[k] = incoming[k]; n++;
+        }
+      });
+      saveStore(); renderAll();
+      setStatus(`✓ Đã nhập ${n} ngày dữ liệu từ file.`, 'ok');
+      log(`Nhập JSON: ${n} ngày`);
+    }catch(e){ setStatus('✗ File JSON không hợp lệ: '+e.message, 'err'); }
+  };
+  rd.readAsText(file);
+}
+
+/* ================= SỰ KIỆN ================= */
+$('#btnFetch').addEventListener('click', fetchLive);
+$('#btnBackfill').addEventListener('click', backfill);
+$('#btnStop').addEventListener('click', ()=>{ state.stopFlag = true; });
+$('#btnCsv').addEventListener('click', exportCsv);
+$('#btnBackup').addEventListener('click', backupJson);
+$('#fileImport').addEventListener('change', e=>{ if(e.target.files[0]) importJson(e.target.files[0]); e.target.value=''; });
+$('#btnClear').addEventListener('click', ()=>{
+  if(confirm('Xoá toàn bộ dữ liệu giá vàng đã lưu trong trình duyệt?')){
+    state.snapshots = {}; state.meta = {};
+    localStorage.removeItem(STORE_KEY); localStorage.removeItem(META_KEY);
+    renderAll();
+    setStatus('Đã xoá toàn bộ dữ liệu.', 'ok');
+    log('Đã xoá dữ liệu');
+  }
+});
+$('#typeSelect').addEventListener('change', e=>{ state.type = e.target.value; renderStats(); renderChart(); renderCurrentTable(); renderHistoryTable(); });
+$('#seriesChips').addEventListener('click', e=>{
+  const btn = e.target.closest('.chip'); if(!btn) return;
+  const s = btn.dataset.series;
+  if(state.active.has(s)){ if(state.active.size===1) return; state.active.delete(s); btn.classList.remove('active'); }
+  else { state.active.add(s); btn.classList.add('active'); }
+  renderStats(); renderChart();
+});
+$('#rangeChips').addEventListener('click', e=>{
+  const btn = e.target.closest('.chip'); if(!btn) return;
+  $('#rangeChips').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  state.range = btn.dataset.range==='all' ? 'all' : Number(btn.dataset.range);
+  renderStats(); renderChart(); renderHistoryTable();
+});
+$('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); });
+
+/* ================= KHỞI TẠO ================= */
+(async function init(){
+  loadStore();
+  setStatus('Đang tải dữ liệu máy chủ (data/gold.json)…', 'run');
+  const remote = await loadRemote();
+  renderAll();
+  if(remote.ok){
+    log(`Đã đồng bộ dữ liệu máy chủ: +${remote.added} ngày mới, ${remote.updated} cập nhật (tổng ${remote.total} ngày)`);
+  }else{
+    log('Không tải được data/gold.json (' + remote.error + ') — dùng dữ liệu cục bộ');
+  }
+  log('Ứng dụng khởi động · ' + sortedKeys().length + ' ngày dữ liệu trong bộ nhớ');
+  await autoFetch();                       // lấy giá hiện tại nếu chưa có trong 6 giờ qua
+  setInterval(autoFetch, 15*60*1000);     // kiểm tra mỗi 15 phút khi mở trang
+})();
+</script>
+</body>
+</html>
