@@ -38,6 +38,8 @@
     padding:8px 14px;font-size:13px;color:var(--muted);max-width:520px
   }
   .badge b{color:var(--gold2)}
+  .header-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
+  .lock-btn{width:42px;height:42px;padding:0;justify-content:center;font-size:18px;flex:none}
 
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
   .spacer{flex:1}
@@ -54,22 +56,22 @@
   .btn.danger2{color:#ff9b9b;border-color:#5b2b34}
   .btn.danger2:hover{background:#3a1a22}
   .btn.small{padding:6px 11px;font-size:13px}
+  .admin-actions{display:flex;gap:10px;flex-wrap:wrap}
+  .admin-actions[hidden]{display:none}
 
   .status{
     border:1px solid var(--line);background:var(--panel2);border-radius:10px;
-    padding:10px 14px;font-size:14px;color:var(--muted);margin-bottom:14px
+    padding:10px 14px;font-size:14px;color:var(--muted);margin-bottom:14px;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis
   }
   .status.ok{border-color:#1f5c46;color:#9df0d3;background:#0e2620}
   .status.err{border-color:#6d2a2a;color:#ffb3b3;background:#2a1214}
   .status.run{border-color:#5c4a1f;color:#ffe6a8;background:#261f0e}
-  .progress{height:6px;background:#1a2340;border-radius:6px;overflow:hidden;margin:-6px 0 14px}
-  .progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:.25s}
-
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin-bottom:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
-  .card .k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
-  .card .v{font-size:21px;font-weight:700;margin-top:6px;word-break:break-all}
-  .card .d{font-size:12px;color:var(--muted);margin-top:4px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(115px,1fr));gap:8px;margin-bottom:10px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:9px 11px}
+  .card .k{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .card .v{font-size:17px;font-weight:700;margin-top:3px;word-break:break-word}
+  .card .d{font-size:11px;color:var(--muted);margin-top:2px}
   .up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--muted)}
 
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:16px}
@@ -82,6 +84,8 @@
     border-radius:9px;padding:7px 10px;font-size:14px;max-width:320px
   }
   .chips{display:flex;gap:6px;flex-wrap:wrap}
+  .chart-chip-row{display:flex;align-items:center;gap:10px}
+  .chart-chip-row .chips{flex-wrap:nowrap}
   .chip{
     border:1px solid var(--line);background:#0d1428;color:var(--muted);
     padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;transition:.15s
@@ -94,13 +98,8 @@
   .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
 
   .chart-wrap{position:relative;height:380px}
-  .empty{
-    position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    color:var(--muted);font-size:14px;text-align:center;padding:20px
-  }
-
-  .table-wrap{overflow:auto;max-height:460px;border:1px solid var(--line);border-radius:12px}
-  table{width:100%;border-collapse:collapse;font-size:14px}
+  .table-wrap{overflow-x:hidden;overflow-y:auto;max-height:460px;border:1px solid var(--line);border-radius:12px}
+  table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
   thead th{
     position:sticky;top:0;background:#16203c;color:#cbd6f2;text-align:left;
     padding:9px 12px;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;z-index:1
@@ -113,15 +112,50 @@
   .tag.live{color:#9df0d3;border-color:#1f5c46;background:#0e2620}
   .tag.wb{color:#ddceff;border-color:#4b3b86;background:#1c1733}
 
-  details.log summary{cursor:pointer;font-weight:600;font-size:15px}
-  #logList{list-style:none;margin:12px 0 0;padding:0;max-height:240px;overflow:auto;font-size:13px}
-  #logList li{padding:5px 0;border-top:1px dashed #22305a;color:var(--muted)}
-  #logList li b{color:var(--gold2);font-weight:600}
-
   footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
   footer ul{margin:8px 0 0;padding-left:20px}
   @media (max-width:640px){
-    h1{font-size:18px} .chart-wrap{height:300px} .badge{max-width:100%}
+    .wrap{padding:0 12px}
+    header.top{align-items:flex-start;padding-top:16px}
+    .brand{align-items:flex-start;gap:10px}
+    .header-tools{gap:6px}
+    .lock-btn{width:40px;height:40px}
+    .logo{width:42px;height:42px;border-radius:12px;font-size:17px}
+    h1{font-size:18px;line-height:1.3}
+    .sub{font-size:12px;overflow-wrap:anywhere}
+    .badge{max-width:calc(100vw - 80px);font-size:12px}
+    .toolbar{gap:8px}
+    .toolbar .btn{min-height:44px;padding:9px 12px}
+    .toolbar .spacer{display:none}
+    .admin-actions{width:100%;gap:8px}
+    .admin-actions .btn{flex:1;justify-content:center}
+    .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+    .card{padding:8px}
+    .card .v{font-size:clamp(13px,4vw,16px)}
+    .panel{padding:13px 12px;border-radius:14px}
+    .panel-head{align-items:flex-start}
+    .controls{width:100%;align-items:stretch}
+    #typeSelect{width:100%;max-width:none;min-height:42px}
+    .chart-chip-row{width:100%;gap:5px;flex-wrap:nowrap}
+    .chart-chip-row .chips{min-width:0;gap:3px;flex-wrap:nowrap}
+    #rangeChips{flex:3}
+    #seriesChips{flex:1}
+    .chart-chip-row .chip{min-width:0;min-height:40px;padding:4px 1px;font-size:clamp(8px,2.5vw,11px);line-height:1.15;white-space:normal;justify-content:center;text-align:center}
+    .check{min-height:36px}
+    .chart-wrap{height:300px}
+    .table-wrap{overflow-x:hidden}
+    table{font-size:12px}
+    thead th{padding:8px 5px;font-size:10px;letter-spacing:0}
+    tbody td{padding:8px 5px;overflow-wrap:anywhere}
+    #currentTable td:first-child{width:48%}
+    #currentTable td:nth-child(2),#currentTable td:nth-child(3){width:26%;font-size:11px}
+    #currentTable tr.group-row td{font-size:11px}
+    #historyTable th:nth-child(4),#historyTable td:nth-child(4),
+    #historyTable th:nth-child(5),#historyTable td:nth-child(5),
+    #historyTable th:nth-child(6),#historyTable td:nth-child(6){display:none}
+    #historyTable th:first-child,#historyTable td:first-child{width:26%}
+    #historyTable th:nth-child(2),#historyTable td:nth-child(2),
+    #historyTable th:nth-child(3),#historyTable td:nth-child(3){width:37%;font-size:11px}
   }
 </style>
 </head>
@@ -136,22 +170,21 @@
         <p class="sub">Nguồn: <a href="https://kimkhanhviethung.vn/tra-cuu-gia-vang.html" target="_blank" rel="noopener">kimkhanhviethung.vn/tra-cuu-gia-vang.html</a> · Đơn vị: Đồng/chỉ</p>
       </div>
     </div>
-    <div class="badge" id="storeBadge">Chưa có dữ liệu</div>
+    <div class="header-tools">
+      <div class="badge" id="storeBadge">Chưa có dữ liệu</div>
+      <button class="btn lock-btn" id="btnAdminLock" type="button" aria-label="Mở công cụ dữ liệu" title="Mở công cụ dữ liệu" aria-expanded="false">🔒</button>
+    </div>
   </header>
 
   <section class="toolbar">
-    <button class="btn primary" id="btnFetch">⟳ Cập nhật ngay</button>
-    <button class="btn" id="btnBackfill">⤓ Tải lịch sử 1 năm (Wayback)</button>
-    <button class="btn danger2" id="btnStop" disabled>■ Dừng</button>
-    <span class="spacer"></span>
-    <button class="btn ghost" id="btnCsv">Xuất CSV</button>
-    <button class="btn ghost" id="btnBackup">Sao lưu JSON</button>
-    <label class="btn ghost">Nhập JSON<input type="file" id="fileImport" accept="application/json,.json" hidden></label>
-    <button class="btn ghost danger2" id="btnClear">Xóa dữ liệu</button>
+    <div class="admin-actions" id="adminActions" hidden>
+      <button class="btn ghost" id="btnCsv" type="button">Xuất CSV</button>
+      <button class="btn ghost" id="btnBackup" type="button">Sao lưu JSON</button>
+      <label class="btn ghost">Nhập JSON<input type="file" id="fileImport" accept="application/json,.json" hidden></label>
+    </div>
   </section>
 
   <div class="status" id="status">Sẵn sàng. Đang kiểm tra giá mới…</div>
-  <div class="progress" id="progress" hidden><div id="progressBar"></div></div>
 
   <section class="cards" id="stats"></section>
 
@@ -159,26 +192,28 @@
     <div class="panel-head">
       <h2>Biểu đồ giá vàng</h2>
       <div class="controls">
-        <select id="typeSelect" title="Chọn loại vàng"></select>
-        <div class="chips" id="seriesChips">
-          <button class="chip buy active" data-series="buy">Mua vào</button>
-          <button class="chip sell active" data-series="sell">Bán ra</button>
-          <button class="chip convert" data-series="convert">Giá quy đổi</button>
-        </div>
+      <select id="typeSelect" title="Chọn loại vàng"></select>
+      <div class="chart-chip-row">
         <div class="chips" id="rangeChips">
+          <button class="chip" data-range="7">7 ngày</button>
           <button class="chip" data-range="30">1 tháng</button>
           <button class="chip" data-range="90">3 tháng</button>
           <button class="chip" data-range="180">6 tháng</button>
           <button class="chip active" data-range="365">1 năm</button>
           <button class="chip" data-range="all">Tất cả</button>
         </div>
-        <label class="check"><input type="checkbox" id="ffill" checked> Kéo giá các ngày chưa có dữ liệu</label>
+        <div class="chips" id="seriesChips">
+          <button class="chip buy active" data-series="buy">Mua vào</button>
+          <button class="chip sell active" data-series="sell">Bán ra</button>
+        </div>
+      </div>
+      <label class="check"><input type="checkbox" id="ffill" checked> Kéo giá các ngày chưa có dữ liệu</label>
       </div>
     </div>
     <div class="chart-wrap">
       <canvas id="chart"></canvas>
-      <div class="empty" id="chartEmpty" hidden>Chưa có dữ liệu để vẽ biểu đồ.<br>Nhấn <b>“Cập nhật ngay”</b> hoặc <b>“Tải lịch sử 1 năm”</b>.</div>
     </div>
+    <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm trên biểu đồ để xem giá.</p>
   </section>
 
   <section class="panel">
@@ -203,17 +238,12 @@
     </table></div>
   </section>
 
-  <details class="panel log">
-    <summary>Nhật ký hoạt động</summary>
-    <ul id="logList"></ul>
-  </details>
-
   <footer>
     <b>Cách hoạt động:</b>
     <ul>
       <li><b>Dữ liệu chung lưu tại <code>data/gold.json</code> trong repo GitHub</b> — GitHub Action scrape bảng giá mỗi ngày lúc 14:00 (giờ VN) rồi commit; ai mở web cũng thấy cùng một dữ liệu, không phụ thuộc trình duyệt.</li>
-      <li>Khi bạn mở trang, app tải <code>data/gold.json</code> rồi gộp với bản ghi cục bộ (localStorage). Nút <b>“Cập nhật ngay”</b> chỉ ghi thêm vào máy bạn (dự phòng khi Action chưa chạy); khi dữ liệu máy chủ quá cũ (&gt;36 giờ) app mới tự lấy trực tiếp.</li>
-      <li>Dữ liệu 1 năm qua lấy từ kho Wayback Machine: bấm nút <b>“Tải lịch sử 1 năm”</b> trong trang, hoặc chạy Action thủ công với input <code>backfill</code> (chạy trên máy GitHub, không vướng CORS). Chạy lại bao nhiêu lần cũng được — ngày đã có sẽ bỏ qua.</li>
+      <li>Khi bạn mở trang, app tự tải <code>data/gold.json</code> rồi gộp với bản ghi cục bộ (localStorage). Dữ liệu chung được GitHub Action cập nhật hằng ngày; nếu dữ liệu máy chủ quá cũ, app tự thử lấy giá mới trực tiếp.</li>
+      <li>Các công cụ nhập/xuất dữ liệu được ẩn sau nút ổ khóa và mật khẩu.</li>
       <li>Giá website mang tính tham khảo, giao dịch theo bảng giá niêm yết tại cửa hàng.</li>
     </ul>
   </footer>
@@ -226,10 +256,10 @@ const SITE_URL = 'https://kimkhanhviethung.vn/tra-cuu-gia-vang.html';
 const REMOTE_DATA = 'data/gold.json';
 const STORE_KEY = 'kkvh_gold_snapshots_v1';
 const META_KEY  = 'kkvh_gold_meta_v1';
+const ADMIN_PASSWORD = '290991';
 const SERIES_META = {
   buy:    {label:'Mua vào',     color:'#4ea8ff'},
-  sell:   {label:'Bán ra',      color:'#e9b949'},
-  convert:{label:'Giá quy đổi', color:'#b18cff'}
+  sell:   {label:'Bán ra',      color:'#e9b949'}
 };
 
 /* Chuỗi proxy: thử lần lượt khi bị CORS chặn (đã test: allorigins + corsfix hoạt động) */
@@ -250,8 +280,8 @@ const state = {
   fill: true,
   chart: null,
   chartDates: [],
-  stopFlag: false,
   busy: false,
+  adminUnlocked: false,
   logs: []
 };
 
@@ -266,7 +296,6 @@ const fmtDmy = k => { const d=parseKey(k); return `${pad(d.getDate())}/${pad(d.g
 const fmtShort = k => { const d=parseKey(k); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}`; };
 const money = v => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toLocaleString('vi-VN') + ' đ';
 const compact = v => (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:2}) + ' tr';
-const delay = ms => new Promise(r=>setTimeout(r,ms));
 const norm = s => (s||'').replace(/\s+/g,' ').trim();
 const num = el => { const t=(el.textContent||'').replace(/[^\d]/g,''); return t?parseInt(t,10):0; };
 const dmyToIso = s => { const m=(s||'').match(/(\d{2})\/(\d{2})\/(\d{4})/); return m?`${m[3]}-${m[2]}-${m[1]}`:null; };
@@ -313,19 +342,15 @@ const latestKey = () => { const k=sortedKeys(); return k.length?k[k.length-1]:nu
 function setStatus(msg, cls){
   const el = $('#status');
   el.textContent = msg;
+  el.title = msg;
   el.className = 'status' + (cls?(' '+cls):'');
 }
 function log(msg){
-  const t = new Date().toLocaleTimeString('vi-VN');
-  state.logs.unshift({t, msg});
+  state.logs.unshift({t: new Date().toLocaleTimeString('vi-VN'), msg});
   state.logs = state.logs.slice(0,80);
-  $('#logList').innerHTML = state.logs.map(l=>`<li><b>${l.t}</b> — ${l.msg}</li>`).join('');
 }
 function setBusy(b){
   state.busy = b;
-  $('#btnFetch').disabled = b;
-  $('#btnBackfill').disabled = b;
-  $('#btnStop').disabled = !b;
 }
 
 /* ================= FETCH QUA PROXY ================= */
@@ -352,9 +377,6 @@ async function fetchText(url){
     }catch(e){
       errs.push(`${i===0?'trực tiếp':'proxy'+i}: ${e.message}`);
     }
-  }
-  if(url.includes('web.archive.org')){
-    throw new Error('không kết nối được Internet Archive (có thể đang tạm ngừng hoạt động hoặc chặn CORS) — ' + errs.join(' | '));
   }
   throw new Error(errs.join(' | '));
 }
@@ -431,97 +453,10 @@ async function autoFetch(){
   const remoteFresh = (state.meta.remoteFetchedAt || 0) > now - 36*3600*1000;   // Action lấy trong 36h qua
   const localFresh  = (state.meta.lastFetchAt   || 0) > now -  6*3600*1000;      // bản ghi cục bộ trong 6h qua
   if(remoteFresh || localFresh){
-    const t = state.meta.remoteFetchedAt
-      ? new Date(state.meta.remoteFetchedAt)
-      : (state.meta.lastFetchAt ? new Date(state.meta.lastFetchAt) : null);
-    setStatus('✓ Dữ liệu đã đồng bộ' + (t ? ` (mới nhất ${t.toLocaleString('vi-VN')})` : '')
-      + ' — GitHub Action tự cập nhật mỗi ngày 14:00. Bấm “Cập nhật ngay” nếu muốn lấy lại ngay.', 'ok');
+    setStatus('✓ Đã đồng bộ · tự cập nhật mỗi ngày.', 'ok');
     return;
   }
   await fetchLive();   // dữ liệu máy chủ đã cũ → thử lấy trực tiếp làm dự phòng
-}
-
-/* ================= BACKFILL WAYBACK ================= */
-async function backfill(){
-  if(state.busy) return;
-  state.stopFlag = false;
-  setBusy(true);
-  $('#progress').hidden = false;
-  setStatus('Đang truy vấn danh sách bản lưu trên Wayback Machine …', 'run');
-  log('Bắt đầu backfill Wayback…');
-  try{
-    const from = toKey(addDays(new Date(), -366)).replace(/-/g,'');
-    const to   = toKey(new Date()).replace(/-/g,'');
-    const cdx = 'https://web.archive.org/cdx/search/cdx?url=' + encodeURIComponent(SITE_URL)
-      + '&output=json&fl=timestamp&filter=statuscode:200'
-      + '&from=' + from + '&to=' + to + '&collapse=timestamp:8&limit=400';
-    const txt = await fetchText(cdx);
-    if(/Temporarily Offline|<html|<!doctype/i.test(txt))
-      throw new Error('Internet Archive đang tạm ngừng hoạt động — thử lại sau ít giờ.');
-    const arr = JSON.parse(txt.trim());
-    const stamps = arr.slice(1).map(r=>r[0]).filter(Boolean);
-    if(!stamps.length){ setStatus('Wayback không có bản lưu nào cho trang này trong 1 năm qua.', 'err'); setBusy(false); $('#progress').hidden=true; return; }
-
-    let done = 0, added = 0, skipped = 0, failed = 0;
-    setStatus(`Tìm thấy ${stamps.length} bản lưu. Đang tải về (những ngày đã có dữ liệu sẽ bỏ qua)…`, 'run');
-    log(`Wayback: ${stamps.length} bản lưu`);
-
-    for(const ts of stamps){
-      if(state.stopFlag){ setStatus('Đã dừng backfill theo yêu cầu.', 'ok'); log('Dừng backfill'); break; }
-      done++;
-      const wbDate = `${ts.slice(0,4)}-${ts.slice(4,6)}-${ts.slice(6,8)}`;
-      if(state.snapshots[wbDate]){ skipped++; }
-      else{
-        try{
-          const snapUrl = `https://web.archive.org/web/${ts}id_/${SITE_URL}`;
-          const html = await fetchText(snapUrl);
-          const parsed = parseGoldPage(html);
-          if(parsed.items.length){
-            const key = (parsed.sourceUpdatedAt && dmyToIso(parsed.sourceUpdatedAt)) || wbDate;
-            if(!state.snapshots[key]){
-              state.snapshots[key] = {
-                date: key,
-                sourceUpdatedAt: parsed.sourceUpdatedAt,
-                fetchedAt: new Date().toISOString(),
-                waybackTs: ts,
-                origin: 'wayback',
-                items: parsed.items
-              };
-              added++;
-              saveStore();
-            } else skipped++;
-          } else { failed++; }
-        }catch(e){
-          failed++;
-          log(`Bản lưu ${wbDate} lỗi: ${e.message}`);
-          if(/Internet Archive|temporarily|failed to fetch|networkerror/i.test(e.message)){
-            setStatus('✗ Không tải được dữ liệu từ Internet Archive (kho lưu trữ có thể đang tạm ngừng). Bạn cứ bấm lại nút này sau — dữ liệu đã có sẽ không bị ghi đè.', 'err');
-            log('Dừng backfill do lỗi kết nối Internet Archive');
-            break;
-          }
-        }
-        await delay(600);
-      }
-      $('#progressBar').style.width = Math.round(done/stamps.length*100) + '%';
-      if(done % 10 === 0 || done === stamps.length){
-        setStatus(`Đang tải lịch sử: ${done}/${stamps.length} bản lưu · thêm mới ${added} · bỏ qua ${skipped} · lỗi ${failed}`, 'run');
-      }
-    }
-    $('#progressBar').style.width = '100%';
-    renderAll();
-    if(!state.stopFlag){
-      setStatus(`✓ Hoàn tất backfill: +${added} ngày mới (bỏ qua ${skipped}, lỗi ${failed}). Tổng ${sortedKeys().length} ngày có dữ liệu.`, 'ok');
-      log(`Backfill xong: +${added}`);
-    }
-    setTimeout(()=>{ $('#progress').hidden = true; $('#progressBar').style.width='0'; }, 1200);
-  }catch(e){
-    setStatus('✗ Chưa tải được lịch sử: ' + e.message +
-      ' — Kho lưu trữ Wayback có thể đang tạm ngừng; hãy thử lại sau ít giờ (bấm lại bao nhiêu lần cũng được, ngày đã có dữ liệu sẽ bỏ qua).', 'err');
-    log('Lỗi backfill: ' + e.message);
-    $('#progress').hidden = true;
-  }finally{
-    setBusy(false);
-  }
 }
 
 /* ================= LOẠI VÀNG ================= */
@@ -566,7 +501,9 @@ function buildTypeSelect(){
     sel.appendChild(og);
   });
   if(!state.type || !types.some(t=>t.group+'||'+t.name===state.type)){
-    const first = types.find(t=>/999\.9|24K|Nhẫn Khâu 98/i.test(t.name)) || types[0];
+    const first = types.find(t=>/^Vàng Nhẫn Khâu 98$/i.test(t.name))
+      || types.find(t=>/999\.9|24K|Nhẫn Khâu 98/i.test(t.name))
+      || types[0];
     state.type = first ? first.group+'||'+first.name : null;
   }
   sel.value = state.type || '';
@@ -577,17 +514,17 @@ function buildTypeSelect(){
 function rangeKeys(){
   const keys = sortedKeys();
   if(state.range === 'all') return keys;
-  const start = addDays(new Date(), -state.range);
+  const start = addDays(new Date(), -(state.range-1));
   return keys.filter(k => parseKey(k) >= start);
 }
 function buildSeries(){
   const keys = rangeKeys();
   if(!keys.length) return {labels:[], dates:[], datasets:[]};
   // Nếu dữ liệu trong khoảng chọn rất ít, chỉ vẽ từ ngày có dữ liệu đầu tiên
-  const start = (state.range==='all' || keys.length<=5) ? parseKey(keys[0]) : addDays(new Date(), -state.range);
+  const start = (state.range==='all' || keys.length<=5) ? parseKey(keys[0]) : addDays(new Date(), -(state.range-1));
   const last = parseKey(todayKey());
   const labels = [], dates = [];
-  const order = ['buy','sell','convert'].filter(s=>state.active.has(s));
+  const order = ['buy','sell'].filter(s=>state.active.has(s));
   const raw = {};
   order.forEach(s=> raw[s]=[]);
 
@@ -609,15 +546,15 @@ function buildSeries(){
         else lastVal = arr[i];
       }
     }
-    const dots = arr.filter(v=>v!==null).length;
     datasets.push({
       label: SERIES_META[s].label,
       data: arr,
       borderColor: SERIES_META[s].color,
       backgroundColor: SERIES_META[s].color + '22',
       borderWidth: 2,
-      pointRadius: dots<=7 ? 3 : 0,
-      pointHoverRadius: 4,
+      pointRadius: context => raw[s][context.dataIndex]===null ? 0 : 3,
+      pointHoverRadius: 7,
+      hitRadius: 10,
       tension: .25,
       spanGaps: false
     });
@@ -625,18 +562,16 @@ function buildSeries(){
   return {labels, dates, datasets};
 }
 function renderChart(){
-  const empty = $('#chartEmpty');
   if(typeof Chart === 'undefined'){
-    empty.hidden = false;
-    empty.innerHTML = 'Đang tải thư viện biểu đồ (Chart.js)… nếu lâu, kiểm tra kết nối mạng.';
     setTimeout(renderChart, 1500);
     return;
   }
   const {labels, dates, datasets} = buildSeries();
   state.chartDates = dates;
   const hasData = datasets.some(d=>d.data.some(v=>v!==null));
-  empty.hidden = hasData;
-  if(!hasData) empty.innerHTML = 'Chưa có dữ liệu cho lựa chọn hiện tại.<br>Nhấn <b>“Cập nhật ngay”</b> hoặc <b>“Tải lịch sử 1 năm”</b>.';
+  $('#chartSelection').textContent = hasData
+    ? 'Chạm hoặc bấm vào một điểm trên biểu đồ để xem giá.'
+    : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
 
   const cfg = {
     type: 'line',
@@ -657,6 +592,20 @@ function renderChart(){
       scales: {
         x: {ticks:{color:'#93a0c0', maxTicksLimit:13, maxRotation:0}, grid:{color:'#1a2340'}},
         y: {ticks:{color:'#93a0c0', callback:v=>compact(v)}, grid:{color:'#1a2340'}}
+      },
+      onClick: (event, elements, chart) => {
+        if(!elements.length) return;
+        const index = elements[0].index;
+        const key = state.chartDates[index];
+        const prices = chart.data.datasets.map((dataset, datasetIndex) => {
+          const value = dataset.data[index];
+          return value===null || value===undefined
+            ? null
+            : `${dataset.label}: ${money(value)}`;
+        }).filter(Boolean);
+        $('#chartSelection').textContent = `Ngày ${fmtDmy(key)} · ${prices.join(' · ')}`;
+        chart.tooltip.setActiveElements(elements, {x:event.x, y:event.y});
+        chart.update('none');
       }
     }
   };
@@ -701,8 +650,6 @@ function renderStats(){
     cards.push(card('Cao nhất (khoảng chọn)', '—', ''));
     cards.push(card('Trung bình', '—', ''));
   }
-  cards.push(card('Số ngày có dữ liệu', String(keys.length),
-    state.range==='all' ? 'toàn bộ thời gian' : `${state.range} ngày gần nhất`));
   $('#stats').innerHTML = cards.join('');
 }
 function card(k, v, d, cls){
@@ -714,7 +661,7 @@ function renderCurrentTable(){
   const k = latestKey();
   const tb = $('#currentTable tbody');
   if(!k){
-    tb.innerHTML = `<tr><td class="muted" style="padding:18px">Chưa có dữ liệu. Bấm <b>Cập nhật ngay</b>.</td></tr>`;
+    tb.innerHTML = `<tr><td class="muted" style="padding:18px">Chưa có dữ liệu.</td></tr>`;
     $('#latestInfo').textContent = '';
     return;
   }
@@ -724,14 +671,13 @@ function renderCurrentTable(){
   snap.items.forEach(it=>{
     if(it.group !== group){
       group = it.group;
-      html += `<tr class="group-row"><td colspan="4">${group}</td></tr>`;
+      html += `<tr class="group-row"><td colspan="3">${group}</td></tr>`;
     }
     const key = it.group + '||' + it.name;
     html += `<tr${key===state.type?' style="background:#1a2447"':''}>
       <td>${it.name}</td>
       <td class="num">${money(it.buy)}</td>
       <td class="num">${money(it.sell)}</td>
-      <td class="num">${it.convert?money(it.convert):'—'}</td>
     </tr>`;
   });
   tb.innerHTML = html;
@@ -825,21 +771,34 @@ function importJson(file){
 }
 
 /* ================= SỰ KIỆN ================= */
-$('#btnFetch').addEventListener('click', fetchLive);
-$('#btnBackfill').addEventListener('click', backfill);
-$('#btnStop').addEventListener('click', ()=>{ state.stopFlag = true; });
+$('#btnAdminLock').addEventListener('click', ()=>{
+  const button = $('#btnAdminLock');
+  const actions = $('#adminActions');
+  if(state.adminUnlocked){
+    state.adminUnlocked = false;
+    actions.hidden = true;
+    button.textContent = '🔒';
+    button.setAttribute('aria-label', 'Mở công cụ dữ liệu');
+    button.title = 'Mở công cụ dữ liệu';
+    button.setAttribute('aria-expanded', 'false');
+    return;
+  }
+  const password = prompt('Nhập mật khẩu để mở công cụ dữ liệu:');
+  if(password===null) return;
+  if(password!==ADMIN_PASSWORD){
+    setStatus('Mật khẩu không đúng.', 'err');
+    return;
+  }
+  state.adminUnlocked = true;
+  actions.hidden = false;
+  button.textContent = '🔓';
+  button.setAttribute('aria-label', 'Khóa công cụ dữ liệu');
+  button.title = 'Khóa công cụ dữ liệu';
+  button.setAttribute('aria-expanded', 'true');
+});
 $('#btnCsv').addEventListener('click', exportCsv);
 $('#btnBackup').addEventListener('click', backupJson);
 $('#fileImport').addEventListener('change', e=>{ if(e.target.files[0]) importJson(e.target.files[0]); e.target.value=''; });
-$('#btnClear').addEventListener('click', ()=>{
-  if(confirm('Xoá toàn bộ dữ liệu giá vàng đã lưu trong trình duyệt?')){
-    state.snapshots = {}; state.meta = {};
-    localStorage.removeItem(STORE_KEY); localStorage.removeItem(META_KEY);
-    renderAll();
-    setStatus('Đã xoá toàn bộ dữ liệu.', 'ok');
-    log('Đã xoá dữ liệu');
-  }
-});
 $('#typeSelect').addEventListener('change', e=>{ state.type = e.target.value; renderStats(); renderChart(); renderCurrentTable(); renderHistoryTable(); });
 $('#seriesChips').addEventListener('click', e=>{
   const btn = e.target.closest('.chip'); if(!btn) return;
