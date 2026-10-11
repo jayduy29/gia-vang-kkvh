@@ -24,7 +24,7 @@
   .wrap{max-width:1180px;margin:0 auto;padding:0 16px}
 
   header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0 14px;flex-wrap:wrap}
-  .brand{display:flex;align-items:center;gap:14px}
+  .brand{display:flex;align-items:center;gap:14px;min-width:0}
   .logo{
     width:52px;height:52px;border-radius:14px;flex:none;
     background:linear-gradient(145deg,var(--gold),#a97b1f);
@@ -33,6 +33,7 @@
   }
   h1{font-size:22px;margin:0;letter-spacing:.2px}
   .sub{margin:3px 0 0;color:var(--muted);font-size:13px}
+  .sub a{white-space:nowrap}
   .badge{
     background:var(--panel);border:1px solid var(--line);border-radius:999px;
     padding:8px 14px;font-size:13px;color:var(--muted);max-width:520px
@@ -117,19 +118,20 @@
   @media (max-width:640px){
     .wrap{padding:0 12px}
     header.top{align-items:flex-start;padding-top:16px}
-    .brand{align-items:flex-start;gap:10px}
+    .brand{align-items:flex-start;gap:10px;width:100%}
     .header-tools{gap:6px}
     .lock-btn{width:40px;height:40px}
     .logo{width:42px;height:42px;border-radius:12px;font-size:17px}
-    h1{font-size:18px;line-height:1.3}
-    .sub{font-size:12px;overflow-wrap:anywhere}
+    h1{font-size:16px;line-height:1.25}
+    .brand>div:last-child{min-width:0}
+    .sub{font-size:11px;line-height:1.35}
     .badge{max-width:calc(100vw - 80px);font-size:12px}
     .toolbar{gap:8px}
     .toolbar .btn{min-height:44px;padding:9px 12px}
     .toolbar .spacer{display:none}
     .admin-actions{width:100%;gap:8px}
     .admin-actions .btn{flex:1;justify-content:center}
-    .cards{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+    .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
     .card{padding:8px}
     .card .v{font-size:clamp(13px,4vw,16px)}
     .panel{padding:13px 12px;border-radius:14px}
@@ -184,7 +186,7 @@
     </div>
   </section>
 
-  <div class="status" id="status">Sẵn sàng. Đang kiểm tra giá mới…</div>
+  <div class="status" id="status" hidden>Sẵn sàng. Đang kiểm tra giá mới…</div>
 
   <section class="cards" id="stats"></section>
 
@@ -343,6 +345,7 @@ function setStatus(msg, cls){
   const el = $('#status');
   el.textContent = msg;
   el.title = msg;
+  el.hidden = !msg;
   el.className = 'status' + (cls?(' '+cls):'');
 }
 function log(msg){
@@ -453,7 +456,7 @@ async function autoFetch(){
   const remoteFresh = (state.meta.remoteFetchedAt || 0) > now - 36*3600*1000;   // Action lấy trong 36h qua
   const localFresh  = (state.meta.lastFetchAt   || 0) > now -  6*3600*1000;      // bản ghi cục bộ trong 6h qua
   if(remoteFresh || localFresh){
-    setStatus('✓ Đã đồng bộ · tự cập nhật mỗi ngày.', 'ok');
+    setStatus('');
     return;
   }
   await fetchLive();   // dữ liệu máy chủ đã cũ → thử lấy trực tiếp làm dự phòng
