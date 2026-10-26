@@ -588,15 +588,20 @@ function buildTypeSelect(){
 function rangeKeys(){
   const keys = sortedKeys();
   if(state.range === 'all') return keys;
-  const start = addDays(new Date(), -(state.range-1));
-  return keys.filter(k => parseKey(k) >= start);
+  const today = parseKey(todayKey());
+  const start = addDays(today, -(Number(state.range)-1));
+  const startKey = toKey(start);
+  return keys.filter(k => k >= startKey);
 }
 function buildSeries(){
   const keys = rangeKeys();
   if(!keys.length) return {labels:[], dates:[], datasets:[]};
-  // Nếu dữ liệu trong khoảng chọn rất ít, chỉ vẽ từ ngày có dữ liệu đầu tiên
-  const start = (state.range==='all' || keys.length<=5) ? parseKey(keys[0]) : addDays(new Date(), -(state.range-1));
-  const last = parseKey(todayKey());
+  const today = parseKey(todayKey());
+  const lastKey = (latestKey() && latestKey() > todayKey()) ? latestKey() : todayKey();
+  const last = parseKey(lastKey);
+  const start = (state.range === 'all' || sortedKeys().length <= 5)
+    ? parseKey(keys[0])
+    : addDays(today, -(Number(state.range)-1));
   const labels = [], dates = [];
   const order = ['buy','sell'].filter(s=>state.active.has(s));
   const raw = {};
