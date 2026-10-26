@@ -161,7 +161,8 @@
   .chip.active.convert{background:var(--chip-convert-bg);border-color:var(--chip-convert-border);color:var(--chip-convert-color)}
   .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
 
-  .chart-wrap{position:relative;height:380px;cursor:crosshair}
+  .chart-wrap{position:relative;height:380px;cursor:crosshair;touch-action:pan-y}
+  #chart{touch-action:pan-y}
   .chart-zoom-controls{
     position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:5px;z-index:5
   }
@@ -346,8 +347,8 @@
     <div class="chart-wrap">
       <canvas id="chart"></canvas>
       <div class="chart-zoom-controls" id="chartZoomControls">
-        <button class="zoom-btn" id="btnZoomIn" type="button" aria-label="Phóng to (xem chi tiết ít ngày hơn)" title="Phóng to (xem chi tiết ít ngày hơn)">＋</button>
-        <button class="zoom-btn" id="btnZoomOut" type="button" aria-label="Thu nhỏ (xem nhiều ngày hơn)" title="Thu nhỏ (xem nhiều ngày hơn)">−</button>
+        <button class="zoom-btn" id="btnZoomIn" type="button" aria-label="Mở rộng số ngày (tăng thời gian)" title="Mở rộng số ngày (tăng thời gian)">＋</button>
+        <button class="zoom-btn" id="btnZoomOut" type="button" aria-label="Giảm số ngày (thu hẹp thời gian)" title="Giảm số ngày (thu hẹp thời gian)">−</button>
       </div>
     </div>
     <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm để xem giá · Dùng nút ＋ / −, chụm 2 ngón tay hoặc cuộn chuột để đổi thời gian.</p>
@@ -926,7 +927,7 @@ function showZoomTooltip(){
   
   const el = $('#chartSelection');
   if(el){
-    el.innerHTML = `🔍 <b>Khoảng thời gian: ${label}</b> · Bấm ＋ / −, cuộn chuột hoặc chụm 2 ngón tay để tăng / giảm số ngày.`;
+    el.innerHTML = `🔍 <b>Khoảng thời gian: ${label}</b> · Bấm ＋ (thêm ngày), − (bớt ngày) hoặc chụm 2 ngón tay.`;
     clearTimeout(zoomNoticeTimeout);
     zoomNoticeTimeout = setTimeout(()=>{
       zoomNoticeTimeout = null;
@@ -1451,61 +1452,75 @@ if(chartWrap){
   let isPinching = false;
   let pinchThrottleTimer = null;
 
-  chartWrap.addEventListener('touchstart', e => {
+  function calcTouchDist(t){
+    return Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
+  }
+
+  function handleTouchStart(e){
     if(e.touches.length === 2){
       isPinching = true;
-      initialPinchDistance = Math.hypot(
-        e.touches[0].clientX - e.touches[1].clientX,
-        e.touches[0].clientY - e.touches[1].clientY
-      );
-    }
-  }, { passive: true });
-
-  chartWrap.addEventListener('touchmove', e => {
-    if(!isPinching || e.touches.length !== 2) return;
-    const currentDist = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
-    const delta = currentDist - initialPinchDistance;
-    
-    if(Math.abs(delta) > 28){
+      initialPinchDistance = calcTouchDist(e.touches);
       if(e.cancelable) e.preventDefault();
-      if(!pinchThrottleTimer){
-        if(delta > 0){
-          applyWheelZoom(-1); // 2 ngón tách ra -> Phóng to (ít ngày hơn)
-        } else {
-          applyWheelZoom(1);  // 2 ngón chụm vào -> Thu nhỏ (nhiều ngày hơn)
-        }
-        initialPinchDistance = currentDist;
-        pinchThrottleTimer = setTimeout(() => {
-          pinchThrottleTimer = null;
-        }, 90);
-      }
     }
-  }, { passive: false });
+  }
 
-  const endPinch = () => {
-    isPinching = false;
-    initialPinchDistance = 0;
-  };
-  chartWrap.addEventListener('touchend', endPinch, { passive: true });
-  chartWrap.addEventListener('touchcancel', endPinch, { passive: true });
+  function handleTouchMove(e){
+    if(e.touches.length === 2){
+      const currentDist = calcTouchDist(e.touches);
+      if(!isPinching || !initialPinchDistance){
+        isPinching = true;
+        initialPinchDistance = currentDist;
+      } else {
+        const delta = currentDist - initialPinchDistance;
+        // Ngưỡng 15px để phản hồi nhanh và nhạy
+        if(Math.abs(delta) >= 15){
+          if(!pinchThrottleTimer){
+            if(delta > 0){
+              applyWheelZoom(1);  // Tách 2 ngón tay ra -> Mở rộng số ngày (tăng ngày)
+            } else {
+              applyWheelZoom(-1); // Chụm 2 ngón tay lại -> Giảm số ngày (bớt ngày)
+            }
+            initialPinchDistance = currentDist;
+            pinchThrottleTimer = setTimeout(() => {
+              pinchThrottleTimer = null;
+            }, 75);
+          }
+        }
+      }
+      if(e.cancelable) e.preventDefault();
+      e.stopPropagation();
+    } else if(isPinching){
+      isPinching = false;
+      initialPinchDistance = 0;
+    }
+  }
+
+  function handleTouchEnd(e){
+    if(e.touches.length < 2){
+      isPinching = false;
+      initialPinchDistance = 0;
+    }
+  }
+
+  chartWrap.addEventListener('touchstart', handleTouchStart, { passive: false, capture: true });
+  chartWrap.addEventListener('touchmove', handleTouchMove, { passive: false, capture: true });
+  chartWrap.addEventListener('touchend', handleTouchEnd, { passive: true, capture: true });
+  chartWrap.addEventListener('touchcancel', handleTouchEnd, { passive: true, capture: true });
 }
 
-// Nút bấm thu phóng trên biểu đồ (hữu ích cho điện thoại và máy tính)
+// Nút bấm thu phóng trên biểu đồ: ＋ để mở rộng số ngày, − để giảm số ngày
 const btnZoomIn = $('#btnZoomIn');
 if(btnZoomIn){
   btnZoomIn.addEventListener('click', e => {
     e.preventDefault();
-    applyWheelZoom(-1);
+    applyWheelZoom(1);  // ＋: Mở rộng số ngày (thêm ngày)
   });
 }
 const btnZoomOut = $('#btnZoomOut');
 if(btnZoomOut){
   btnZoomOut.addEventListener('click', e => {
     e.preventDefault();
-    applyWheelZoom(1);
+    applyWheelZoom(-1); // −: Giảm số ngày (bớt ngày)
   });
 }
 $('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); renderCompareBox(); });
