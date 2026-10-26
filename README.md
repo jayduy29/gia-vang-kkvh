@@ -66,11 +66,9 @@ node scripts/fetch-gold.mjs --backfill      # + lịch sử Wayback (khi archive
 
 | Nút | Chức năng |
 |---|---|
-| **⟳ Cập nhật ngay** | Lấy bảng giá hiện tại ngay (qua CORS proxy), ghi vào bộ nhớ cục bộ. |
-| **⤓ Tải lịch sử 1 năm (Wayback)** | Backfill ngay trong trình duyệt (cách dự phòng; bản chạy trên GitHub Action không vướng CORS). |
-| **■ Dừng** | Dừng backfill — chạy lại được, ngày đã có sẽ bỏ qua. |
-| **Xuất CSV / Sao lưu JSON / Nhập JSON** | Xuất & backup dữ liệu. |
-| **Xóa dữ liệu** | Xoá dữ liệu **cục bộ** (không ảnh hưởng `data/gold.json` trên repo). |
+| **☀️ / 🌙 Đổi giao diện Sáng / Tối** | Chuyển đổi giữa chế độ Sáng và Tối (tự nhận diện theo hệ thống thiết bị và lưu tùy chọn). |
+| **🔒 / 🔓 Quản trị dữ liệu** | Mở các công cụ quản lý sau khi nhập mật khẩu. |
+| **Xuất CSV / Sao lưu JSON / Nhập JSON** | Xuất & backup dữ liệu (trong menu quản trị). |
 
 ## Về dữ liệu 1 năm qua
 
