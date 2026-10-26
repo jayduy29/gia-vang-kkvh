@@ -173,6 +173,54 @@
   .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;border:1px solid}
   .tag.live{color:var(--tag-live-txt);border-color:var(--tag-live-border);background:var(--tag-live-bg)}
   .tag.wb{color:var(--tag-wb-txt);border-color:var(--tag-wb-border);background:var(--tag-wb-bg)}
+  .compare-box{
+    background:var(--panel2);border:1px solid var(--line);border-radius:14px;
+    padding:14px 16px;margin-top:14px;transition:.2s
+  }
+  .compare-box[hidden]{display:none}
+  .compare-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+  .compare-title{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--txt)}
+  .compare-icon{font-size:18px}
+  .compare-badge{
+    background:var(--panel);border:1px solid var(--line);border-radius:999px;
+    padding:3px 10px;font-size:12px;color:var(--gold2);font-weight:700
+  }
+  .compare-points{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .cmp-point-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;
+    padding:12px 14px;flex:1;min-width:240px
+  }
+  .cmp-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .cmp-point-tag{
+    display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;
+    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px
+  }
+  .cmp-point-tag.a{background:rgba(255,170,0,.15);color:#ffaa00;border:1px solid rgba(255,170,0,.35)}
+  .cmp-point-tag.b{background:rgba(0,229,255,.15);color:#00bcd4;border:1px solid rgba(0,229,255,.35)}
+  .cmp-select{
+    background:var(--input-bg);color:var(--txt);border:1px solid var(--line);
+    border-radius:8px;padding:5px 8px;font-size:13px;max-width:180px
+  }
+  .cmp-prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px}
+  .cmp-plabel{color:var(--muted);display:block;font-size:11px}
+  .cmp-pval{font-weight:700;color:var(--txt);font-size:14px}
+  .compare-arrow{font-size:20px;color:var(--gold2);font-weight:700;flex:none}
+  .compare-results{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px
+  }
+  .compare-results[hidden]{display:none}
+  .cmp-stat-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px
+  }
+  .cmp-stat-card.highlight{
+    background:linear-gradient(145deg,rgba(233,185,73,.12),rgba(78,168,255,.08));
+    border-color:rgba(233,185,73,.4)
+  }
+  .cmp-stat-title{font-size:12px;color:var(--muted);font-weight:600}
+  .cmp-stat-val{font-size:18px;font-weight:700;margin-top:4px}
+  .cmp-stat-sub{font-size:12px;margin-top:2px;font-weight:600}
+  .cmp-note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+  .cmp-note[hidden]{display:none}
 
   footer{color:var(--muted);font-size:13px;border-top:1px solid var(--line);padding-top:14px;margin-top:6px}
   footer ul{margin:8px 0 0;padding-left:20px}
@@ -219,6 +267,9 @@
     #historyTable th:first-child,#historyTable td:first-child{width:26%}
     #historyTable th:nth-child(2),#historyTable td:nth-child(2),
     #historyTable th:nth-child(3),#historyTable td:nth-child(3){width:37%;font-size:11px}
+    .compare-points{flex-direction:column;align-items:stretch}
+    .compare-arrow{text-align:center;transform:rotate(90deg);margin:-4px 0}
+    .compare-results{grid-template-columns:1fr}
   }
 </style>
 </head>
@@ -256,7 +307,10 @@
 
   <section class="panel">
     <div class="panel-head">
-      <h2>Biểu đồ giá vàng</h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2>Biểu đồ giá vàng</h2>
+        <button class="btn small ghost" id="btnToggleCompare" type="button" title="Bật/tắt so sánh giá giữa 2 thời điểm">⚖️ So sánh 2 điểm</button>
+      </div>
       <div class="controls">
       <select id="typeSelect" title="Chọn loại vàng"></select>
       <div class="chart-chip-row">
@@ -280,6 +334,76 @@
       <canvas id="chart"></canvas>
     </div>
     <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.</p>
+
+    <div class="compare-box" id="compareBox" hidden>
+      <div class="compare-header">
+        <div class="compare-title">
+          <span class="compare-icon">⚖️</span>
+          <b>So sánh giá giữa 2 thời điểm</b>
+          <span class="compare-badge" id="cmpRangeBadge">—</span>
+        </div>
+        <button class="btn ghost small" id="btnResetCompare" type="button" title="Đóng và xóa so sánh">✕ Đóng so sánh</button>
+      </div>
+
+      <div class="compare-points">
+        <div class="cmp-point-card" id="cmpCardA">
+          <div class="cmp-card-top">
+            <span class="cmp-point-tag a">Mốc 1 (Điểm A)</span>
+            <select id="cmpSelectA" class="cmp-select" title="Chọn ngày mốc 1"></select>
+          </div>
+          <div class="cmp-prices-grid">
+            <div>
+              <span class="cmp-plabel">Mua vào</span>
+              <span class="cmp-pval" id="cmpBuyA">—</span>
+            </div>
+            <div>
+              <span class="cmp-plabel">Bán ra</span>
+              <span class="cmp-pval" id="cmpSellA">—</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="compare-arrow">➔</div>
+
+        <div class="cmp-point-card" id="cmpCardB">
+          <div class="cmp-card-top">
+            <span class="cmp-point-tag b">Mốc 2 (Điểm B)</span>
+            <select id="cmpSelectB" class="cmp-select" title="Chọn ngày mốc 2"></select>
+          </div>
+          <div class="cmp-prices-grid">
+            <div>
+              <span class="cmp-plabel">Mua vào</span>
+              <span class="cmp-pval" id="cmpBuyB">—</span>
+            </div>
+            <div>
+              <span class="cmp-plabel">Bán ra</span>
+              <span class="cmp-pval" id="cmpSellB">—</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compare-results" id="cmpResults" hidden>
+        <div class="cmp-stat-card">
+          <div class="cmp-stat-title">Biến động Giá Mua vào</div>
+          <div class="cmp-stat-val" id="cmpBuyDiff">—</div>
+          <div class="cmp-stat-sub" id="cmpBuyPct">—</div>
+        </div>
+        <div class="cmp-stat-card">
+          <div class="cmp-stat-title">Biến động Giá Bán ra</div>
+          <div class="cmp-stat-val" id="cmpSellDiff">—</div>
+          <div class="cmp-stat-sub" id="cmpSellPct">—</div>
+        </div>
+        <div class="cmp-stat-card highlight">
+          <div class="cmp-stat-title">Lãi / Lỗ thực tế (Mua mốc 1, Bán mốc 2)</div>
+          <div class="cmp-stat-val" id="cmpTradeDiff">—</div>
+          <div class="cmp-stat-sub" id="cmpTradePct">—</div>
+        </div>
+      </div>
+      <div class="cmp-note" id="cmpNote" hidden>
+        * Lãi/lỗ thực tế tính khi mua tại Mốc 1 (theo giá Bán ra của tiệm) và bán lại tại Mốc 2 (theo giá Mua vào của tiệm).
+      </div>
+    </div>
   </section>
 
   <section class="panel">
@@ -355,7 +479,9 @@ const state = {
   chartDates: [],
   busy: false,
   adminUnlocked: false,
-  logs: []
+  logs: [],
+  compareA: null,
+  compareB: null
 };
 
 /* ================= UTIL ================= */
@@ -632,8 +758,35 @@ function buildSeries(){
       borderColor: color,
       backgroundColor: color + '22',
       borderWidth: 2,
-      pointRadius: context => raw[s][context.dataIndex]===null ? 0 : 3,
-      pointHoverRadius: 7,
+      pointRadius: context => {
+        if(raw[s][context.dataIndex] === null) return 0;
+        const k = dates[context.dataIndex];
+        if((state.compareA && state.compareA === k) || (state.compareB && state.compareB === k)){
+          return 8;
+        }
+        return 3;
+      },
+      pointHoverRadius: 9,
+      pointBorderWidth: context => {
+        const k = dates[context.dataIndex];
+        if((state.compareA && state.compareA === k) || (state.compareB && state.compareB === k)){
+          return 3;
+        }
+        return 1;
+      },
+      pointBackgroundColor: context => {
+        const k = dates[context.dataIndex];
+        if(state.compareA && state.compareA === k) return '#ffaa00';
+        if(state.compareB && state.compareB === k) return '#00e5ff';
+        return color;
+      },
+      pointBorderColor: context => {
+        const k = dates[context.dataIndex];
+        if((state.compareA && state.compareA === k) || (state.compareB && state.compareB === k)){
+          return '#ffffff';
+        }
+        return color;
+      },
       hitRadius: 10,
       tension: .25,
       spanGaps: false
@@ -649,7 +802,7 @@ function renderChart(){
   const {labels, dates, datasets} = buildSeries();
   state.chartDates = dates;
   const hasData = datasets.some(d=>d.data.some(v=>v!==null));
-  if(!zoomNoticeTimeout){
+  if(!zoomNoticeTimeout && !state.compareA){
     $('#chartSelection').textContent = hasData
       ? 'Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.'
       : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
@@ -680,15 +833,8 @@ function renderChart(){
         if(!elements.length) return;
         const index = elements[0].index;
         const key = state.chartDates[index];
-        const prices = chart.data.datasets.map((dataset, datasetIndex) => {
-          const value = dataset.data[index];
-          return value===null || value===undefined
-            ? null
-            : `${dataset.label}: ${money(value)}`;
-        }).filter(Boolean);
-        $('#chartSelection').textContent = `Ngày ${fmtDmy(key)} · ${prices.join(' · ')}`;
-        chart.tooltip.setActiveElements(elements, {x:event.x, y:event.y});
-        chart.update('none');
+        if(!key) return;
+        handleChartPointClick(key);
       }
     }
   };
@@ -833,6 +979,185 @@ function handleChartWheel(e){
   wheelPendingDelta = 0;
 }
 
+/* ================= SO SÁNH GIÁ GIỮA 2 ĐIỂM ================= */
+function getPriceForCompare(dateKey, series){
+  const snap = state.snapshots[dateKey];
+  if(snap){
+    const it = itemOf(snap, state.type);
+    const v = valOf(it, series);
+    if(v !== null && v > 0) return v;
+  }
+  if(state.fill){
+    const keys = sortedKeys().filter(k => k <= dateKey);
+    for(let i = keys.length - 1; i >= 0; i--){
+      const s = state.snapshots[keys[i]];
+      const it = itemOf(s, state.type);
+      const val = valOf(it, series);
+      if(val !== null && val > 0) return val;
+    }
+  }
+  return null;
+}
+
+function ensureCompareVisible(){
+  if(!state.compareA) return;
+  const keys = sortedKeys();
+  if(!keys.length) return;
+  const minKey = state.compareA;
+  if(state.range !== 'all'){
+    const today = parseKey(todayKey());
+    const start = addDays(today, -(Number(state.range)-1));
+    const startKey = toKey(start);
+    if(minKey < startKey){
+      const diff = Math.ceil((today - parseKey(minKey)) / 86400000) + 1;
+      if(diff >= getTotalDataDays()){
+        state.range = 'all';
+      } else {
+        state.range = diff;
+      }
+      updateRangeChipsUI();
+    }
+  }
+}
+
+function handleChartPointClick(key){
+  if(!state.compareA){
+    state.compareA = key;
+    state.compareB = null;
+  } else if(!state.compareB){
+    if(key === state.compareA){
+      state.compareA = null;
+    } else if(key < state.compareA){
+      state.compareB = state.compareA;
+      state.compareA = key;
+    } else {
+      state.compareB = key;
+    }
+  } else {
+    if(key === state.compareA){
+      state.compareA = state.compareB;
+      state.compareB = null;
+    } else if(key === state.compareB){
+      state.compareB = null;
+    } else if(key < state.compareA){
+      state.compareA = key;
+    } else {
+      state.compareB = key;
+    }
+  }
+
+  ensureCompareVisible();
+  renderCompareBox();
+  renderChart();
+}
+
+function renderCompareBox(){
+  const box = $('#compareBox');
+  const btnToggle = $('#btnToggleCompare');
+  if(!box) return;
+
+  if(!state.compareA && !state.compareB){
+    box.hidden = true;
+    if(btnToggle) btnToggle.classList.remove('primary');
+    return;
+  }
+
+  box.hidden = false;
+  if(btnToggle) btnToggle.classList.add('primary');
+
+  const allDatesDesc = sortedKeys().slice().reverse();
+  const selectA = $('#cmpSelectA');
+  const selectB = $('#cmpSelectB');
+
+  if(selectA && selectB){
+    const optA = allDatesDesc.map(k => `<option value="${k}"${k===state.compareA?' selected':''}>${fmtDmy(k)}</option>`).join('');
+    const optB = allDatesDesc.map(k => `<option value="${k}"${k===state.compareB?' selected':''}>${fmtDmy(k)}</option>`).join('');
+    selectA.innerHTML = optA;
+    selectB.innerHTML = (state.compareB ? '' : '<option value="" disabled selected>Chọn ngày...</option>') + optB;
+    if(state.compareA) selectA.value = state.compareA;
+    if(state.compareB) selectB.value = state.compareB;
+  }
+
+  const keyA = state.compareA;
+  const keyB = state.compareB;
+
+  const buyA = keyA ? getPriceForCompare(keyA, 'buy') : null;
+  const sellA = keyA ? getPriceForCompare(keyA, 'sell') : null;
+  $('#cmpBuyA').textContent = buyA ? money(buyA) : '—';
+  $('#cmpSellA').textContent = sellA ? money(sellA) : '—';
+
+  const buyB = keyB ? getPriceForCompare(keyB, 'buy') : null;
+  const sellB = keyB ? getPriceForCompare(keyB, 'sell') : null;
+  $('#cmpBuyB').textContent = buyB ? money(buyB) : '—';
+  $('#cmpSellB').textContent = sellB ? money(sellB) : '—';
+
+  const results = $('#cmpResults');
+  const note = $('#cmpNote');
+  const badge = $('#cmpRangeBadge');
+
+  if(keyA && keyB){
+    results.hidden = false;
+    note.hidden = false;
+
+    const diffDays = Math.round((parseKey(keyB) - parseKey(keyA)) / 86400000);
+    const months = (diffDays / 30.4).toFixed(1);
+    badge.textContent = diffDays === 0 ? 'Cùng ngày' : (diffDays > 30 ? `${diffDays} ngày (~${months} tháng)` : `${diffDays} ngày`);
+
+    // 1. Mua vào
+    if(buyA && buyB){
+      const diff = buyB - buyA;
+      const pct = (diff / buyA) * 100;
+      const cls = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'flat');
+      const sign = diff > 0 ? '+' : '';
+      $('#cmpBuyDiff').className = `cmp-stat-val ${cls}`;
+      $('#cmpBuyDiff').textContent = `${sign}${Number(diff).toLocaleString('vi-VN')} đ`;
+      $('#cmpBuyPct').className = `cmp-stat-sub ${cls}`;
+      $('#cmpBuyPct').textContent = `${sign}${pct.toFixed(2)}% (${money(buyA)} ➔ ${money(buyB)})`;
+    } else {
+      $('#cmpBuyDiff').textContent = '—';
+      $('#cmpBuyPct').textContent = '';
+    }
+
+    // 2. Bán ra
+    if(sellA && sellB){
+      const diff = sellB - sellA;
+      const pct = (diff / sellA) * 100;
+      const cls = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'flat');
+      const sign = diff > 0 ? '+' : '';
+      $('#cmpSellDiff').className = `cmp-stat-val ${cls}`;
+      $('#cmpSellDiff').textContent = `${sign}${Number(diff).toLocaleString('vi-VN')} đ`;
+      $('#cmpSellPct').className = `cmp-stat-sub ${cls}`;
+      $('#cmpSellPct').textContent = `${sign}${pct.toFixed(2)}% (${money(sellA)} ➔ ${money(sellB)})`;
+    } else {
+      $('#cmpSellDiff').textContent = '—';
+      $('#cmpSellPct').textContent = '';
+    }
+
+    // 3. Lãi / Lỗ thực tế: Mua tại A (theo giá Bán ra sellA), Bán tại B (theo giá Mua vào buyB)
+    if(sellA && buyB){
+      const diff = buyB - sellA;
+      const pct = (diff / sellA) * 100;
+      const cls = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'flat');
+      const sign = diff > 0 ? '+' : '';
+      const text = diff > 0 ? 'LÃI' : (diff < 0 ? 'LỖ' : 'HÒA VỐN');
+      $('#cmpTradeDiff').className = `cmp-stat-val ${cls}`;
+      $('#cmpTradeDiff').textContent = `${text} ${sign}${Number(diff).toLocaleString('vi-VN')} đ/chỉ`;
+      $('#cmpTradePct').className = `cmp-stat-sub ${cls}`;
+      $('#cmpTradePct').textContent = `Tỷ suất: ${sign}${pct.toFixed(2)}% (Mua ${money(sellA)} ➔ Bán ${money(buyB)})`;
+    } else {
+      $('#cmpTradeDiff').textContent = '—';
+      $('#cmpTradePct').textContent = '';
+    }
+
+    $('#chartSelection').innerHTML = `⚖️ <b>Đang so sánh:</b> Ngày ${fmtDmy(keyA)} (Điểm A) ➔ Ngày ${fmtDmy(keyB)} (Điểm B) · Bấm điểm khác trên biểu đồ để đổi mốc.`;
+  } else {
+    results.hidden = true;
+    note.hidden = true;
+    badge.textContent = 'Chờ chọn mốc 2...';
+    $('#chartSelection').innerHTML = `📍 <b>Đã chọn Mốc 1 (Ngày ${fmtDmy(keyA)}).</b> Hãy bấm thêm 1 điểm trên biểu đồ để bắt đầu so sánh.`;
+  }
+}
+
 /* ================= THỐNG KÊ ================= */
 function renderStats(){
   const keys = rangeKeys();
@@ -942,6 +1267,7 @@ function renderAll(){
   renderChart();
   renderCurrentTable();
   renderHistoryTable();
+  renderCompareBox();
 }
 
 /* ================= XUẤT / SAO LƯU / NHẬP / XÓA ================= */
@@ -1074,7 +1400,7 @@ $('#btnAdminLock').addEventListener('click', ()=>{
 $('#btnCsv').addEventListener('click', exportCsv);
 $('#btnBackup').addEventListener('click', backupJson);
 $('#fileImport').addEventListener('change', e=>{ if(e.target.files[0]) importJson(e.target.files[0]); e.target.value=''; });
-$('#typeSelect').addEventListener('change', e=>{ state.type = e.target.value; renderStats(); renderChart(); renderCurrentTable(); renderHistoryTable(); });
+$('#typeSelect').addEventListener('change', e=>{ state.type = e.target.value; renderStats(); renderChart(); renderCurrentTable(); renderHistoryTable(); renderCompareBox(); });
 $('#seriesChips').addEventListener('click', e=>{
   const btn = e.target.closest('.chip'); if(!btn) return;
   const s = btn.dataset.series;
@@ -1095,7 +1421,68 @@ const chartWrap = $('.chart-wrap');
 if(chartWrap){
   chartWrap.addEventListener('wheel', handleChartWheel, { passive: false });
 }
-$('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); });
+$('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); renderCompareBox(); });
+
+/* Sự kiện tính năng so sánh 2 điểm */
+const btnToggleCompare = $('#btnToggleCompare');
+if(btnToggleCompare){
+  btnToggleCompare.addEventListener('click', ()=>{
+    if(state.compareA || state.compareB){
+      state.compareA = null;
+      state.compareB = null;
+    } else {
+      const chartKeys = (state.chartDates && state.chartDates.length)
+        ? sortedKeys().filter(k => state.chartDates.includes(k))
+        : sortedKeys();
+      if(chartKeys.length >= 2){
+        state.compareA = chartKeys[0];
+        state.compareB = chartKeys[chartKeys.length - 1];
+      } else if(chartKeys.length === 1){
+        state.compareA = chartKeys[0];
+        state.compareB = null;
+      }
+    }
+    renderCompareBox();
+    renderChart();
+  });
+}
+const btnResetCompare = $('#btnResetCompare');
+if(btnResetCompare){
+  btnResetCompare.addEventListener('click', ()=>{
+    state.compareA = null;
+    state.compareB = null;
+    renderCompareBox();
+    renderChart();
+  });
+}
+const cmpSelectA = $('#cmpSelectA');
+if(cmpSelectA){
+  cmpSelectA.addEventListener('change', e=>{
+    state.compareA = e.target.value;
+    if(state.compareB && state.compareA > state.compareB){
+      const temp = state.compareA;
+      state.compareA = state.compareB;
+      state.compareB = temp;
+    }
+    ensureCompareVisible();
+    renderCompareBox();
+    renderChart();
+  });
+}
+const cmpSelectB = $('#cmpSelectB');
+if(cmpSelectB){
+  cmpSelectB.addEventListener('change', e=>{
+    state.compareB = e.target.value;
+    if(state.compareA && state.compareB < state.compareA){
+      const temp = state.compareA;
+      state.compareA = state.compareB;
+      state.compareB = temp;
+    }
+    ensureCompareVisible();
+    renderCompareBox();
+    renderChart();
+  });
+}
 
 /* ================= KHỞI TẠO ================= */
 (async function init(){
