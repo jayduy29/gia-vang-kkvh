@@ -84,11 +84,13 @@
   header.top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0 14px;flex-wrap:wrap}
   .brand{display:flex;align-items:center;gap:12px;min-width:0}
   .logo{
-    width:46px;height:46px;border-radius:12px;flex:none;
-    background:linear-gradient(145deg,var(--gold),#a97b1f);
-    color:#221a05;display:flex;align-items:center;justify-content:center;
-    font-weight:800;font-size:18px;box-shadow:0 6px 20px rgba(233,185,73,.25)
+    width:46px;height:46px;flex:none;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    filter:drop-shadow(0 4px 14px rgba(233,185,73,.35));
+    transition:transform .2s ease;
   }
+  .logo:hover{transform:scale(1.06)}
+  .logo svg{width:100%;height:100%;display:block}
   h1{font-size:21px;margin:0;letter-spacing:.2px;white-space:nowrap}
   .source-credit{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.5}
   .source-credit a{color:var(--gold2);word-break:break-all}
@@ -244,7 +246,7 @@
     .wrap{padding:0 12px}
     header.top{align-items:flex-start;padding-top:16px;gap:12px}
     .brand{align-items:center;gap:8px;width:100%}
-    .logo{width:34px;height:34px;font-size:14px;border-radius:9px}
+    .logo{width:34px;height:34px}
     h1{font-size:clamp(12px, 3.8vw, 16px);line-height:1.2;white-space:nowrap;letter-spacing:-0.2px}
     .lock-btn{width:40px;height:40px}
     .theme-btn{width:40px;height:40px;padding:0;font-size:17px}
@@ -295,7 +297,64 @@
 
   <header class="top">
     <div class="brand">
-      <div class="logo">Au</div>
+      <div class="logo" aria-label="Logo Kim Khánh Việt Hùng" title="Kim Khánh Việt Hùng — Vàng 999.9">
+        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="kkBg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1f2c47"/>
+              <stop offset="55%" stop-color="#0f172a"/>
+              <stop offset="100%" stop-color="#080c16"/>
+            </linearGradient>
+            <linearGradient id="kkRim" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FFF0A0"/>
+              <stop offset="35%" stop-color="#E5A620"/>
+              <stop offset="70%" stop-color="#8F5800"/>
+              <stop offset="100%" stop-color="#E5A620"/>
+            </linearGradient>
+            <radialGradient id="kkGlow" cx="24" cy="24" r="18" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#E9B949" stop-opacity="0.32"/>
+              <stop offset="100%" stop-color="#E9B949" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="kkBarTop" x1="13" y1="14" x2="38" y2="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="30%" stop-color="#FFF6BE"/>
+              <stop offset="70%" stop-color="#FED045"/>
+              <stop offset="100%" stop-color="#E59E12"/>
+            </linearGradient>
+            <linearGradient id="kkBarFront" x1="16" y1="21" x2="34" y2="33" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#E59E12"/>
+              <stop offset="45%" stop-color="#B87304"/>
+              <stop offset="100%" stop-color="#643800"/>
+            </linearGradient>
+            <linearGradient id="kkBarLeft" x1="10" y1="16" x2="18" y2="33" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#8A5100"/>
+              <stop offset="100%" stop-color="#452600"/>
+            </linearGradient>
+            <linearGradient id="kkRidge" x1="18.5" y1="23.5" x2="38.5" y2="20" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95"/>
+              <stop offset="100%" stop-color="#FED045" stop-opacity="0.4"/>
+            </linearGradient>
+            <linearGradient id="kkSparkleGrad" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#FFFFFF"/>
+              <stop offset="100%" stop-color="#FFF4B8"/>
+            </linearGradient>
+          </defs>
+          <rect width="48" height="48" rx="13" fill="url(#kkBg)"/>
+          <rect x="0.75" y="0.75" width="46.5" height="46.5" rx="12.25" stroke="url(#kkRim)" stroke-width="1.5"/>
+          <rect width="48" height="48" rx="13" fill="url(#kkGlow)"/>
+          <ellipse cx="24.5" cy="34" rx="14.5" ry="3.5" fill="#000000" fill-opacity="0.55"/>
+          <polygon points="13,16 18.5,23.5 15,32.5 9.5,24.5" fill="url(#kkBarLeft)"/>
+          <polygon points="18.5,23.5 38.5,20 35,29 15,32.5" fill="url(#kkBarFront)"/>
+          <polygon points="13,16 33,12.5 38.5,20 18.5,23.5" fill="url(#kkBarTop)"/>
+          <line x1="18.5" y1="23.5" x2="38.5" y2="20" stroke="url(#kkRidge)" stroke-width="1" stroke-linecap="round"/>
+          <line x1="13" y1="16" x2="18.5" y2="23.5" stroke="#FFF8C9" stroke-width="0.9" stroke-linecap="round" stroke-opacity="0.85"/>
+          <text x="25.5" y="19" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif" font-size="3.2" font-weight="900" fill="#7A4500" transform="rotate(-9.5 25.5 19)" letter-spacing="0.3" opacity="0.88">KKVH 999.9</text>
+          <path d="M34 5 C34 8 32.2 9.5 29 9.5 C32.2 9.5 34 11 34 14 C34 11 35.8 9.5 39 9.5 C35.8 9.5 34 8 34 5 Z" fill="url(#kkSparkleGrad)"/>
+          <circle cx="34" cy="9.5" r="1.3" fill="#FFFFFF"/>
+          <path d="M7 18 C7 19.5 5.8 20.2 4 20.2 C5.8 20.2 7 21 7 22.5 C7 21 8.2 20.2 10 20.2 C8.2 20.2 7 19.5 7 18 Z" fill="#FFF4BD" opacity="0.9"/>
+          <circle cx="7" cy="20.2" r="0.8" fill="#FFFFFF"/>
+        </svg>
+      </div>
       <h1>Tra cứu giá vàng — Kim Khánh Việt Hùng</h1>
     </div>
     <div class="header-tools">
