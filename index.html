@@ -98,7 +98,9 @@
   }
   .badge b{color:var(--gold2)}
   .header-tools{display:flex;align-items:center;gap:8px;margin-left:auto}
-  .lock-btn,.theme-btn{width:42px;height:42px;padding:0;justify-content:center;font-size:18px;flex:none}
+  .lock-btn{width:42px;height:42px;padding:0;justify-content:center;font-size:18px;flex:none}
+  .theme-btn{height:42px;padding:0 13px;justify-content:center;font-size:13.5px;font-weight:600;flex:none;gap:7px}
+  .theme-icon{font-size:16px;line-height:1}
 
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
   .spacer{flex:1}
@@ -178,9 +180,9 @@
     .wrap{padding:0 12px}
     header.top{align-items:flex-start;padding-top:16px}
     .brand{align-items:flex-start;gap:10px;width:100%}
-    .header-tools{gap:6px}
-    .lock-btn,.theme-btn{width:40px;height:40px}
-    .logo{width:42px;height:42px;border-radius:12px;font-size:17px}
+    .lock-btn{width:40px;height:40px}
+    .theme-btn{width:40px;height:40px;padding:0;font-size:17px}
+    .theme-btn .theme-text{display:none}
     h1{font-size:16px;line-height:1.25}
     .brand>div:last-child{min-width:0}
     .sub{font-size:11px;line-height:1.35}
@@ -233,7 +235,9 @@
     </div>
     <div class="header-tools">
       <div class="badge" id="storeBadge">Chưa có dữ liệu</div>
-      <button class="btn theme-btn" id="btnTheme" type="button" aria-label="Chuyển chế độ sáng/tối" title="Chuyển chế độ sáng/tối">☀️</button>
+      <button class="btn theme-btn" id="btnTheme" type="button" aria-label="Chuyển chế độ sáng/tối" title="Chuyển chế độ sáng/tối">
+        <span class="theme-icon">☀️</span><span class="theme-text">Giao diện sáng</span>
+      </button>
       <button class="btn lock-btn" id="btnAdminLock" type="button" aria-label="Mở công cụ dữ liệu" title="Mở công cụ dữ liệu" aria-expanded="false">🔒</button>
     </div>
   </header>
@@ -857,12 +861,18 @@ function updateThemeUI(theme){
   const meta = $('#metaThemeColor');
   if(meta) meta.setAttribute('content', theme === 'light' ? '#f4f6fb' : '#0b1020');
   if(!btn) return;
+  const icon = btn.querySelector('.theme-icon');
+  const text = btn.querySelector('.theme-text');
   if(theme === 'light'){
-    btn.textContent = '🌙';
+    if(icon) icon.textContent = '🌙';
+    if(text) text.textContent = 'Giao diện tối';
+    if(!icon && !text) btn.textContent = '🌙';
     btn.setAttribute('aria-label', 'Chuyển sang giao diện tối');
     btn.title = 'Chuyển sang giao diện tối';
   }else{
-    btn.textContent = '☀️';
+    if(icon) icon.textContent = '☀️';
+    if(text) text.textContent = 'Giao diện sáng';
+    if(!icon && !text) btn.textContent = '☀️';
     btn.setAttribute('aria-label', 'Chuyển sang giao diện sáng');
     btn.title = 'Chuyển sang giao diện sáng';
   }
