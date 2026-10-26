@@ -158,7 +158,7 @@
   .chip.active.convert{background:var(--chip-convert-bg);border-color:var(--chip-convert-border);color:var(--chip-convert-color)}
   .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
 
-  .chart-wrap{position:relative;height:380px}
+  .chart-wrap{position:relative;height:380px;cursor:crosshair}
   .table-wrap{overflow-x:hidden;overflow-y:auto;max-height:460px;border:1px solid var(--line);border-radius:12px}
   table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
   thead th{
@@ -279,7 +279,7 @@
     <div class="chart-wrap">
       <canvas id="chart"></canvas>
     </div>
-    <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm trên biểu đồ để xem giá.</p>
+    <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.</p>
   </section>
 
   <section class="panel">
@@ -644,9 +644,11 @@ function renderChart(){
   const {labels, dates, datasets} = buildSeries();
   state.chartDates = dates;
   const hasData = datasets.some(d=>d.data.some(v=>v!==null));
-  $('#chartSelection').textContent = hasData
-    ? 'Chạm hoặc bấm vào một điểm trên biểu đồ để xem giá.'
-    : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
+  if(!zoomNoticeTimeout){
+    $('#chartSelection').textContent = hasData
+      ? 'Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.'
+      : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
+  }
 
   const isLight = document.documentElement.getAttribute('data-theme') === 'light';
   const cfg = {
@@ -687,6 +689,143 @@ function renderChart(){
   };
   if(state.chart){ state.chart.destroy(); }
   state.chart = new Chart($('#chart'), cfg);
+}
+
+/* ================= THU PHÓNG BIỂU ĐỒ BẰNG CUỘN CHUỘT (WHEEL ZOOM) ================= */
+let wheelThrottleTimer = null;
+let wheelHistoryTimeout = null;
+let zoomNoticeTimeout = null;
+let lastWheelTime = 0;
+let wheelPendingDelta = 0;
+
+function getTotalDataDays(){
+  const keys = sortedKeys();
+  if(!keys.length) return 365;
+  const first = parseKey(keys[0]);
+  const last = parseKey(keys[keys.length - 1]);
+  const diff = Math.ceil((last - first) / 86400000) + 1;
+  return Math.max(diff, 7);
+}
+
+function updateRangeChipsUI(){
+  const container = $('#rangeChips');
+  if(!container) return;
+  const chips = container.querySelectorAll('.chip:not(#customRangeChip)');
+  let matched = false;
+
+  chips.forEach(c => {
+    const val = c.dataset.range;
+    if(state.range === 'all'){
+      if(val === 'all'){ c.classList.add('active'); matched = true; }
+      else c.classList.remove('active');
+    } else {
+      if(Number(val) === Number(state.range)){ c.classList.add('active'); matched = true; }
+      else c.classList.remove('active');
+    }
+  });
+
+  let custom = $('#customRangeChip');
+  if(!matched && state.range !== 'all'){
+    if(!custom){
+      custom = document.createElement('button');
+      custom.id = 'customRangeChip';
+      custom.className = 'chip active';
+      const allBtn = container.querySelector('[data-range="all"]');
+      if(allBtn) container.insertBefore(custom, allBtn);
+      else container.appendChild(custom);
+    }
+    custom.dataset.range = state.range;
+    custom.textContent = `${state.range} ngày`;
+    custom.classList.add('active');
+  } else if(custom){
+    custom.remove();
+  }
+}
+
+function showZoomTooltip(){
+  const totalDays = getTotalDataDays();
+  const label = state.range === 'all' 
+    ? `Tất cả (${totalDays} ngày)` 
+    : (state.range < 30 ? `${state.range} ngày` : `${state.range} ngày (~${Math.round(state.range/30)} tháng)`);
+  
+  const el = $('#chartSelection');
+  if(el){
+    el.innerHTML = `🔍 <b>Khoảng thời gian: ${label}</b> · Cuộn chuột trong biểu đồ để tăng / giảm số ngày.`;
+    clearTimeout(zoomNoticeTimeout);
+    zoomNoticeTimeout = setTimeout(()=>{
+      zoomNoticeTimeout = null;
+      const hasData = state.chart && state.chart.data && state.chart.data.datasets.some(d=>d.data.some(v=>v!==null));
+      el.textContent = hasData
+        ? 'Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.'
+        : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
+    }, 2200);
+  }
+}
+
+function applyWheelZoom(delta){
+  if(delta === 0) return;
+  const totalDays = getTotalDataDays();
+  const maxDays = Math.max(totalDays, 365);
+  
+  let current = state.range === 'all' ? maxDays : Number(state.range);
+  if(isNaN(current) || current <= 0) current = 365;
+
+  let next;
+  if(delta < 0){
+    // Cuộn lên: Zoom IN (thu hẹp khoảng thời gian để xem chi tiết gần đây)
+    let step;
+    if(current <= 14) step = 2;
+    else if(current <= 30) step = 4;
+    else if(current <= 90) step = 10;
+    else if(current <= 180) step = 20;
+    else step = 35;
+    next = Math.max(3, current - step);
+  } else {
+    // Cuộn xuống: Zoom OUT (mở rộng khoảng thời gian để xem toàn cảnh)
+    let step;
+    if(current < 14) step = 2;
+    else if(current < 30) step = 5;
+    else if(current < 90) step = 12;
+    else if(current < 180) step = 25;
+    else step = 45;
+    next = current + step;
+  }
+
+  if(next >= maxDays){
+    state.range = 'all';
+  } else {
+    state.range = next;
+  }
+
+  updateRangeChipsUI();
+  renderStats();
+  renderChart();
+  showZoomTooltip();
+
+  clearTimeout(wheelHistoryTimeout);
+  wheelHistoryTimeout = setTimeout(()=>{
+    renderHistoryTable();
+  }, 120);
+}
+
+function handleChartWheel(e){
+  e.preventDefault();
+  wheelPendingDelta += e.deltaY;
+  
+  const now = performance.now();
+  if(now - lastWheelTime < 35){
+    clearTimeout(wheelThrottleTimer);
+    wheelThrottleTimer = setTimeout(()=>{
+      applyWheelZoom(wheelPendingDelta);
+      wheelPendingDelta = 0;
+      lastWheelTime = performance.now();
+    }, 35);
+    return;
+  }
+
+  lastWheelTime = now;
+  applyWheelZoom(wheelPendingDelta);
+  wheelPendingDelta = 0;
 }
 
 /* ================= THỐNG KÊ ================= */
@@ -943,8 +1082,14 @@ $('#rangeChips').addEventListener('click', e=>{
   $('#rangeChips').querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   btn.classList.add('active');
   state.range = btn.dataset.range==='all' ? 'all' : Number(btn.dataset.range);
+  const custom = $('#customRangeChip');
+  if(custom && btn !== custom) custom.remove();
   renderStats(); renderChart(); renderHistoryTable();
 });
+const chartWrap = $('.chart-wrap');
+if(chartWrap){
+  chartWrap.addEventListener('wheel', handleChartWheel, { passive: false });
+}
 $('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); });
 
 /* ================= KHỞI TẠO ================= */
