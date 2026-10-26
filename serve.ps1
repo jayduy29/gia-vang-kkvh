@@ -9,7 +9,7 @@ try {
   exit 1
 }
 Write-Output "SERVING $root on http://localhost:8787/"
-$mime = @{'.html'='text/html; charset=utf-8'; '.js'='text/javascript; charset=utf-8'; '.mjs'='text/javascript; charset=utf-8'; '.css'='text/css; charset=utf-8'; '.json'='application/json'; '.csv'='text/csv'; '.png'='image/png'; '.svg'='image/svg+xml'; '.yml'='text/yaml'; '.md'='text/markdown; charset=utf-8'}
+$mime = @{'.html'='text/html; charset=utf-8'; '.js'='text/javascript; charset=utf-8'; '.mjs'='text/javascript; charset=utf-8'; '.css'='text/css; charset=utf-8'; '.json'='application/json'; '.webmanifest'='application/manifest+json'; '.csv'='text/csv'; '.png'='image/png'; '.svg'='image/svg+xml'; '.yml'='text/yaml'; '.md'='text/markdown; charset=utf-8'}
 while ($listener.IsListening) {
   try {
     $ctx = $listener.GetContext()

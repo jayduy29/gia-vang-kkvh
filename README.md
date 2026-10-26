@@ -67,6 +67,7 @@ node scripts/fetch-gold.mjs --backfill      # + lịch sử Wayback (khi archive
 | Nút | Chức năng |
 |---|---|
 | **☀️ / 🌙 Đổi giao diện Sáng / Tối** | Chuyển đổi giữa chế độ Sáng và Tối (tự nhận diện theo hệ thống thiết bị và lưu tùy chọn). |
+| **📲 Tạo app** | Cài đặt ứng dụng PWA lên màn hình chính trên điện thoại (iOS Safari, Android Chrome) hoặc máy tính (Chrome, Edge). Hỗ trợ mở toàn màn hình độc lập, tải nhanh offline với Service Worker và biểu tượng thỏi vàng KKVH 999.9. |
 | **⚖️ So sánh 2 điểm** | So sánh chênh lệch giá Mua / Bán và tính lãi/lỗ thực tế giữa 2 thời điểm bất kỳ (bấm trực tiếp 2 điểm trên biểu đồ hoặc chọn ngày trong bảng so sánh). |
 | **Nút ＋ / − & Chụm 2 ngón tay / Cuộn chuột** | Phóng to (xem chi tiết ít ngày hơn) hoặc thu nhỏ (xem toàn cảnh) linh hoạt trên cả điện thoại (chạm nút ＋/−, chụm 2 ngón tay) và máy tính (cuộn chuột). |
 | **🔒 / 🔓 Quản trị dữ liệu** | Mở các công cụ quản lý sau khi nhập mật khẩu. |
@@ -82,9 +83,14 @@ khi online lại: bấm nút backfill trong trang, hoặc vào **Actions → Run
 
 ```
 index.html                          # web app (HTML + CSS + JS)
+manifest.webmanifest                # cấu hình PWA (Progressive Web App)
+sw.js                               # Service Worker cache offline
+icon.svg                            # Logo thỏi vàng 3D KKVH 999.9 (vector)
+icon-192.png, icon-512.png          # App icon độ phân giải cao cho PWA
 data/gold.json                      # ← DỮ LIỆU CHUNG (do Action ghi)
 scripts/gold-parse.mjs              # parse bảng giá (dùng chung Node/trình duyệt)
 scripts/fetch-gold.mjs              # script thu thập cho GitHub Action
+scripts/generate-icons.ps1          # script tạo app icons PNG từ .NET
 .github/workflows/daily-gold.yml    # cron 14:00 VN mỗi ngày
 serve.ps1                           # server local để chạy app
 README.md
