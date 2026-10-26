@@ -68,7 +68,7 @@ node scripts/fetch-gold.mjs --backfill      # + lịch sử Wayback (khi archive
 |---|---|
 | **☀️ / 🌙 Đổi giao diện Sáng / Tối** | Chuyển đổi giữa chế độ Sáng và Tối (tự nhận diện theo hệ thống thiết bị và lưu tùy chọn). |
 | **⚖️ So sánh 2 điểm** | So sánh chênh lệch giá Mua / Bán và tính lãi/lỗ thực tế giữa 2 thời điểm bất kỳ (bấm trực tiếp 2 điểm trên biểu đồ hoặc chọn ngày trong bảng so sánh). |
-| **Cuộn chuột trên biểu đồ** | Phóng to (xem chi tiết ít ngày hơn) hoặc thu nhỏ (xem toàn cảnh nhiều ngày hơn). |
+| **Nút ＋ / − & Chụm 2 ngón tay / Cuộn chuột** | Phóng to (xem chi tiết ít ngày hơn) hoặc thu nhỏ (xem toàn cảnh) linh hoạt trên cả điện thoại (chạm nút ＋/−, chụm 2 ngón tay) và máy tính (cuộn chuột). |
 | **🔒 / 🔓 Quản trị dữ liệu** | Mở các công cụ quản lý sau khi nhập mật khẩu. |
 | **Xuất CSV / Sao lưu JSON / Nhập JSON** | Xuất & backup dữ liệu (trong menu quản trị). |
 

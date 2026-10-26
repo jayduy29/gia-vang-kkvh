@@ -162,6 +162,18 @@
   .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
 
   .chart-wrap{position:relative;height:380px;cursor:crosshair}
+  .chart-zoom-controls{
+    position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:5px;z-index:5
+  }
+  .zoom-btn{
+    width:32px;height:32px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel);color:var(--txt);font-size:17px;font-weight:700;
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    box-shadow:var(--shadow-card);transition:.15s;padding:0;line-height:1;
+    touch-action:manipulation;user-select:none;-webkit-user-select:none
+  }
+  .zoom-btn:hover{border-color:var(--gold2);color:var(--gold2);background:var(--panel2)}
+  .zoom-btn:active{transform:scale(.92)}
   .table-wrap{overflow-x:hidden;overflow-y:auto;max-height:460px;border:1px solid var(--line);border-radius:12px}
   table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
   thead th{
@@ -256,6 +268,8 @@
     .chart-chip-row .chip{min-width:0;min-height:40px;padding:4px 1px;font-size:clamp(8px,2.5vw,11px);line-height:1.15;white-space:normal;justify-content:center;text-align:center}
     .check{min-height:36px}
     .chart-wrap{height:300px}
+    .chart-zoom-controls{right:8px;top:8px;gap:4px}
+    .zoom-btn{width:30px;height:30px;font-size:15px}
     .table-wrap{overflow-x:hidden}
     table{font-size:12px}
     thead th{padding:8px 5px;font-size:10px;letter-spacing:0}
@@ -331,8 +345,12 @@
     </div>
     <div class="chart-wrap">
       <canvas id="chart"></canvas>
+      <div class="chart-zoom-controls" id="chartZoomControls">
+        <button class="zoom-btn" id="btnZoomIn" type="button" aria-label="Phóng to (xem chi tiết ít ngày hơn)" title="Phóng to (xem chi tiết ít ngày hơn)">＋</button>
+        <button class="zoom-btn" id="btnZoomOut" type="button" aria-label="Thu nhỏ (xem nhiều ngày hơn)" title="Thu nhỏ (xem nhiều ngày hơn)">−</button>
+      </div>
     </div>
-    <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.</p>
+    <p class="muted" id="chartSelection" aria-live="polite">Chạm hoặc bấm vào một điểm để xem giá · Dùng nút ＋ / −, chụm 2 ngón tay hoặc cuộn chuột để đổi thời gian.</p>
 
     <div class="compare-box" id="compareBox" hidden>
       <div class="compare-header">
@@ -804,7 +822,7 @@ function renderChart(){
   const hasData = datasets.some(d=>d.data.some(v=>v!==null));
   if(!zoomNoticeTimeout && !state.compareA){
     $('#chartSelection').textContent = hasData
-      ? 'Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.'
+      ? getChartSelectionHint()
       : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
   }
 
@@ -893,6 +911,13 @@ function updateRangeChipsUI(){
   }
 }
 
+function getChartSelectionHint(){
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  return isTouch
+    ? 'Chạm vào điểm để xem giá · Bấm ＋ / − hoặc chụm 2 ngón tay để thu phóng.'
+    : 'Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột hoặc bấm ＋ / − để đổi thời gian.';
+}
+
 function showZoomTooltip(){
   const totalDays = getTotalDataDays();
   const label = state.range === 'all' 
@@ -901,13 +926,13 @@ function showZoomTooltip(){
   
   const el = $('#chartSelection');
   if(el){
-    el.innerHTML = `🔍 <b>Khoảng thời gian: ${label}</b> · Cuộn chuột trong biểu đồ để tăng / giảm số ngày.`;
+    el.innerHTML = `🔍 <b>Khoảng thời gian: ${label}</b> · Bấm ＋ / −, cuộn chuột hoặc chụm 2 ngón tay để tăng / giảm số ngày.`;
     clearTimeout(zoomNoticeTimeout);
     zoomNoticeTimeout = setTimeout(()=>{
       zoomNoticeTimeout = null;
       const hasData = state.chart && state.chart.data && state.chart.data.datasets.some(d=>d.data.some(v=>v!==null));
       el.textContent = hasData
-        ? 'Chạm hoặc bấm vào một điểm để xem giá · Cuộn chuột trong biểu đồ để tăng / giảm thời gian.'
+        ? getChartSelectionHint()
         : 'Chưa có dữ liệu cho lựa chọn hiện tại.';
     }, 2200);
   }
@@ -1420,6 +1445,68 @@ $('#rangeChips').addEventListener('click', e=>{
 const chartWrap = $('.chart-wrap');
 if(chartWrap){
   chartWrap.addEventListener('wheel', handleChartWheel, { passive: false });
+
+  // Thu phóng bằng cử chỉ chụm 2 ngón tay trên màn hình cảm ứng
+  let initialPinchDistance = 0;
+  let isPinching = false;
+  let pinchThrottleTimer = null;
+
+  chartWrap.addEventListener('touchstart', e => {
+    if(e.touches.length === 2){
+      isPinching = true;
+      initialPinchDistance = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+    }
+  }, { passive: true });
+
+  chartWrap.addEventListener('touchmove', e => {
+    if(!isPinching || e.touches.length !== 2) return;
+    const currentDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    const delta = currentDist - initialPinchDistance;
+    
+    if(Math.abs(delta) > 28){
+      if(e.cancelable) e.preventDefault();
+      if(!pinchThrottleTimer){
+        if(delta > 0){
+          applyWheelZoom(-1); // 2 ngón tách ra -> Phóng to (ít ngày hơn)
+        } else {
+          applyWheelZoom(1);  // 2 ngón chụm vào -> Thu nhỏ (nhiều ngày hơn)
+        }
+        initialPinchDistance = currentDist;
+        pinchThrottleTimer = setTimeout(() => {
+          pinchThrottleTimer = null;
+        }, 90);
+      }
+    }
+  }, { passive: false });
+
+  const endPinch = () => {
+    isPinching = false;
+    initialPinchDistance = 0;
+  };
+  chartWrap.addEventListener('touchend', endPinch, { passive: true });
+  chartWrap.addEventListener('touchcancel', endPinch, { passive: true });
+}
+
+// Nút bấm thu phóng trên biểu đồ (hữu ích cho điện thoại và máy tính)
+const btnZoomIn = $('#btnZoomIn');
+if(btnZoomIn){
+  btnZoomIn.addEventListener('click', e => {
+    e.preventDefault();
+    applyWheelZoom(-1);
+  });
+}
+const btnZoomOut = $('#btnZoomOut');
+if(btnZoomOut){
+  btnZoomOut.addEventListener('click', e => {
+    e.preventDefault();
+    applyWheelZoom(1);
+  });
 }
 $('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); renderCompareBox(); });
 
