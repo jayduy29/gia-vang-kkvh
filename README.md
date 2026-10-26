@@ -67,7 +67,7 @@ node scripts/fetch-gold.mjs --backfill      # + lịch sử Wayback (khi archive
 | Nút | Chức năng |
 |---|---|
 | **☀️ / 🌙 Đổi giao diện Sáng / Tối** | Chuyển đổi giữa chế độ Sáng và Tối (tự nhận diện theo hệ thống thiết bị và lưu tùy chọn). |
-| **📲 Tạo app** | Cài đặt ứng dụng PWA lên màn hình chính trên điện thoại (iOS Safari, Android Chrome) hoặc máy tính (Chrome, Edge). Hỗ trợ mở toàn màn hình độc lập, tải nhanh offline với Service Worker và biểu tượng thỏi vàng KKVH 999.9. |
+| **📲 Tải app** | Tải và cài đặt ứng dụng PWA lên màn hình chính trên điện thoại (iOS Safari, Android Chrome) hoặc máy tính (Chrome, Edge). Hỗ trợ mở toàn màn hình độc lập, tải nhanh offline với Service Worker và biểu tượng thỏi vàng KKVH 999.9. |
 | **⚖️ So sánh 2 điểm** | So sánh chênh lệch giá Mua / Bán và tính lãi/lỗ thực tế giữa 2 thời điểm bất kỳ (bấm trực tiếp 2 điểm trên biểu đồ hoặc chọn ngày trong bảng so sánh). |
 | **Nút ＋ / − & Chụm 2 ngón tay / Cuộn chuột** | Phóng to (xem chi tiết ít ngày hơn) hoặc thu nhỏ (xem toàn cảnh) linh hoạt trên cả điện thoại (chạm nút ＋/−, chụm 2 ngón tay) và máy tính (cuộn chuột). |
 | **🔒 / 🔓 Quản trị dữ liệu** | Mở các công cụ quản lý sau khi nhập mật khẩu. |
