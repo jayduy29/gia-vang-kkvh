@@ -2,8 +2,11 @@ name: Cập nhật giá vàng hằng ngày
 
 on:
   schedule:
-    # 07:00 UTC = 14:00 giờ Việt Nam — sau giờ site niêm yết giá
+    # 07:00, 07:30, 08:00 UTC = 14:00, 14:30, 15:00 giờ Việt Nam
+    # Tự động thử lại nếu server nguồn tạm bận/chập chờn, hoặc cập nhật nếu có giá buổi chiều
     - cron: '0 7 * * *'
+    - cron: '30 7 * * *'
+    - cron: '0 8 * * *'
   workflow_dispatch:
     inputs:
       backfill:

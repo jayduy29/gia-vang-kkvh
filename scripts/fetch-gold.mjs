@@ -17,7 +17,7 @@ import { parseGoldPage, dmyToIso, mergeSnapshot } from './gold-parse.mjs';
 const SITE_URL = 'https://kimkhanhviethung.vn/tra-cuu-gia-vang.html';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DATA_FILE = join(ROOT, 'data', 'gold.json');
-const UA = 'Mozilla/5.0 (compatible; GoldPriceCollector/1.0; GitHub-Actions)';
+const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36';
 
 const args = process.argv.slice(2);
 const BACKFILL = args.includes('--backfill');
@@ -30,21 +30,28 @@ const log = (...a) => console.log(new Date().toISOString().slice(11, 19), '|', .
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const isoDay = d => d.toISOString().slice(0, 10);
 
-async function getText(url, timeoutMs = 45000, tries = 3){
+async function getText(url, timeoutMs = 60000, tries = 5){
   let lastErr;
   for(let i = 1; i <= tries; i++){
     try{
       const res = await fetch(url, {
-        headers: { 'user-agent': UA, 'accept': 'text/html,application/json,*/*' },
+        headers: {
+          'user-agent': UA,
+          'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+          'accept-language': 'vi-VN,vi;q=0.9,en-US;q=0.8,en;q=0.7',
+          'cache-control': 'no-cache',
+          'pragma': 'no-cache'
+        },
         signal: AbortSignal.timeout(timeoutMs),
-        redirect: 'follow'
+        redirect: 'follow',
+        cache: 'no-store'
       });
       if(!res.ok) throw new Error('HTTP ' + res.status);
       return await res.text();
     }catch(e){
       lastErr = e;
       log(`  thử ${i}/${tries} lỗi: ${e.message}`);
-      if(i < tries) await sleep(3000 * i);
+      if(i < tries) await sleep(5000 * i);
     }
   }
   throw lastErr;

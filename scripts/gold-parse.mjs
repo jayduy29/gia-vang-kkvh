@@ -59,6 +59,15 @@ export function mergeSnapshot(store, key, snap){
   const old = store[key];
   if(!old){ store[key] = snap; return 'added'; }
   if(old.origin === 'live' && snap.origin === 'wayback') return 'kept';
+  // Nếu cả 2 đều là live và ngày cập nhật từ nguồn giống nhau hoặc giá giống hệt nhau -> giữ nguyên
+  if(old.origin === 'live' && snap.origin === 'live'){
+    if(old.sourceUpdatedAt && snap.sourceUpdatedAt && old.sourceUpdatedAt === snap.sourceUpdatedAt){
+      return 'kept';
+    }
+    const oldStr = JSON.stringify(old.items || []);
+    const newStr = JSON.stringify(snap.items || []);
+    if(oldStr === newStr) return 'kept';
+  }
   if(String(old.fetchedAt || '') >= String(snap.fetchedAt || '')) return 'kept';
   store[key] = snap;
   return 'updated';
