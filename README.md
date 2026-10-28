@@ -37,12 +37,12 @@ Workflow **`.github/workflows/daily-gold.yml`**:
 
 | Kích hoạt | Thời gian | Việc làm |
 |---|---|---|
-| `schedule` (cron) | **07:00 UTC = 14:00 giờ VN mỗi ngày** | `node scripts/fetch-gold.mjs` → scrape bảng giá → merge → commit `data/gold.json` |
+| `schedule` (cron) | **3 lần/ngày: 10:00, 14:00, 16:00 (giờ VN)** | `node scripts/fetch-gold.mjs` → scrape bảng giá → merge → commit `data/gold.json` |
 | `workflow_dispatch` (chạy tay) | Khi bạn bấm nút Run | Tùy chọn `backfill=true` để tải thêm lịch sử 1 năm từ Wayback |
 
 Xem/chạy: repo → tab **Actions** → *Cập nhật giá vàng hằng ngày* → **Run workflow**.
 
-Muốn đổi giờ: sửa cron trong file workflow (ví dụ `'30 6 * * *'` = 13:30 VN).
+Muốn đổi giờ: sửa cron trong file workflow `.github/workflows/daily-gold.yml`.
 Lưu ý GitHub cron có thể trễ vài phút.
 
 Script **không cần thư viện ngoài** (dùng `fetch` của Node 18+, parse bằng regex không đổi
@@ -91,7 +91,7 @@ data/gold.json                      # ← DỮ LIỆU CHUNG (do Action ghi)
 scripts/gold-parse.mjs              # parse bảng giá (dùng chung Node/trình duyệt)
 scripts/fetch-gold.mjs              # script thu thập cho GitHub Action
 scripts/generate-icons.ps1          # script tạo app icons PNG từ .NET
-.github/workflows/daily-gold.yml    # cron 14:00 VN mỗi ngày
+.github/workflows/daily-gold.yml    # cron tự động 10h, 14h, 16h VN mỗi ngày
 serve.ps1                           # server local để chạy app
 README.md
 ```

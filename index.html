@@ -558,7 +558,7 @@
     <p class="source-credit">Nguồn bảng giá: <a href="https://kimkhanhviethung.vn/tra-cuu-gia-vang.html" target="_blank" rel="noopener">kimkhanhviethung.vn/tra-cuu-gia-vang.html</a> · Đơn vị tính: Đồng/chỉ</p>
     <b>Cách hoạt động:</b>
     <ul>
-      <li><b>Dữ liệu chung lưu tại <code>data/gold.json</code> trong repo GitHub</b> — GitHub Action scrape bảng giá mỗi ngày lúc 14:00 (giờ VN) rồi commit; ai mở web cũng thấy cùng một dữ liệu, không phụ thuộc trình duyệt.</li>
+      <li><b>Dữ liệu chung lưu tại <code>data/gold.json</code> trong repo GitHub</b> — GitHub Action tự động thu thập bảng giá 3 lần/ngày lúc 10:00, 14:00 và 16:00 (giờ VN) rồi commit; ai mở web cũng thấy cùng một dữ liệu, không phụ thuộc trình duyệt.</li>
       <li>Khi bạn mở trang, app tự tải <code>data/gold.json</code> rồi gộp với bản ghi cục bộ (localStorage). Dữ liệu chung được GitHub Action cập nhật hằng ngày; nếu dữ liệu máy chủ quá cũ, app tự thử lấy giá mới trực tiếp.</li>
       <li>Các công cụ nhập/xuất dữ liệu được ẩn sau nút ổ khóa và mật khẩu.</li>
       <li>Giá website mang tính tham khảo, giao dịch theo bảng giá niêm yết tại cửa hàng.</li>
@@ -589,7 +589,7 @@
 <script>
 /* ================= CẤU HÌNH ================= */
 const SITE_URL = 'https://kimkhanhviethung.vn/tra-cuu-gia-vang.html';
-/* Dữ liệu chung (mọi người xem giống nhau) — do GitHub Action ghi mỗi ngày 14:00 */
+/* Dữ liệu chung (mọi người xem giống nhau) — do GitHub Action ghi hằng ngày (10h, 14h, 16h) */
 const REMOTE_DATA = 'data/gold.json';
 const STORE_KEY = 'kkvh_gold_snapshots_v1';
 const META_KEY  = 'kkvh_gold_meta_v1';
