@@ -1,7 +1,7 @@
 {
  "site": "https://kimkhanhviethung.vn/tra-cuu-gia-vang.html",
  "unit": "Đồng/chỉ",
- "generatedAt": "2026-11-03T03:44:27.028Z",
+ "generatedAt": "2026-11-03T08:04:09.736Z",
  "days": 25,
  "snapshots": {
   "2026-10-09": {
@@ -2550,56 +2550,56 @@
   },
   "2026-11-03": {
    "date": "2026-11-03",
-   "sourceUpdatedAt": "03/11/2026 09:51:41",
-   "fetchedAt": "2026-11-03T03:44:27.027Z",
+   "sourceUpdatedAt": "03/11/2026 13:11:09",
+   "fetchedAt": "2026-11-03T08:04:09.736Z",
    "origin": "live",
    "items": [
     {
      "group": "Vàng 24K",
      "name": "Vàng 999.9",
-     "buy": 12850000,
-     "sell": 13030000,
+     "buy": 12820000,
+     "sell": 13000000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng Nhẫn Khâu 98",
-     "buy": 12510000,
-     "sell": 12670000,
+     "buy": 12480000,
+     "sell": 12640000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng Nhẫn Khâu 97 ( Quảng Nam )",
-     "buy": 12340000,
-     "sell": 12500000,
+     "buy": 12310000,
+     "sell": 12470000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng Nhẫn Khâu 96",
-     "buy": 12160000,
-     "sell": 12320000,
+     "buy": 12130000,
+     "sell": 12290000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Nữ trang 980",
-     "buy": 12520000,
-     "sell": 12850000,
+     "buy": 12490000,
+     "sell": 12820000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng NL Ngoài 9999",
-     "buy": 12750000,
+     "buy": 12720000,
      "sell": 0,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng NL Ngoài 999",
-     "buy": 12700000,
+     "buy": 12670000,
      "sell": 0,
      "convert": 0
     },
