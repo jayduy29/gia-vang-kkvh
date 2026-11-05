@@ -1,7 +1,7 @@
 {
  "site": "https://kimkhanhviethung.vn/tra-cuu-gia-vang.html",
  "unit": "Đồng/chỉ",
- "generatedAt": "2026-11-05T03:50:04.270Z",
+ "generatedAt": "2026-11-05T08:14:01.844Z",
  "days": 27,
  "snapshots": {
   "2026-10-09": {
@@ -2762,8 +2762,8 @@
   },
   "2026-11-05": {
    "date": "2026-11-05",
-   "sourceUpdatedAt": "05/11/2026 10:25:26",
-   "fetchedAt": "2026-11-05T03:50:04.270Z",
+   "sourceUpdatedAt": "05/11/2026 11:08:08",
+   "fetchedAt": "2026-11-05T08:14:01.843Z",
    "origin": "live",
    "items": [
     {
@@ -2804,14 +2804,14 @@
     {
      "group": "Vàng 24K",
      "name": "Vàng NL Ngoài 9999",
-     "buy": 13030000,
+     "buy": 13050000,
      "sell": 0,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng NL Ngoài 999",
-     "buy": 12980000,
+     "buy": 13000000,
      "sell": 0,
      "convert": 0
     },
