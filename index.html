@@ -438,10 +438,10 @@
       <div class="chart-chip-row">
         <div class="chips" id="rangeChips">
           <button class="chip" data-range="7">7 ngày</button>
-          <button class="chip" data-range="30">1 tháng</button>
+          <button class="chip active" data-range="30">1 tháng</button>
           <button class="chip" data-range="90">3 tháng</button>
           <button class="chip" data-range="180">6 tháng</button>
-          <button class="chip active" data-range="365">1 năm</button>
+          <button class="chip" data-range="365">1 năm</button>
           <button class="chip" data-range="all">Tất cả</button>
         </div>
         <div class="chips" id="seriesChips">
@@ -620,7 +620,7 @@ const state = {
   meta: {},
   type: null,             // "group||name"
   active: new Set(['buy','sell']),
-  range: 365,
+  range: 30,
   fill: true,
   chart: null,
   chartDates: [],
@@ -640,6 +640,8 @@ const parseKey = k => { const [y,m,d]=k.split('-').map(Number); return new Date(
 const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
 const fmtDmy = k => { const d=parseKey(k); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}/${d.getFullYear()}`; };
 const fmtShort = k => { const d=parseKey(k); return `${pad(d.getDate())}/${pad(d.getMonth()+1)}`; };
+const formatSourceUpdate = (s, k) => { if(!s||s==='—') return '—'; const d=fmtDmy(k); if(s.startsWith(d)){ const t=s.slice(d.length).trim(); if(t) return `lúc ${t}`; } return s; };
+const formatSourceTimeOnly = (s, k) => { if(!s||s==='—') return '—'; const d=fmtDmy(k); if(s.startsWith(d)){ const t=s.slice(d.length).trim(); if(t) return t; } return s; };
 const money = v => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toLocaleString('vi-VN') + ' đ';
 const compact = v => (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:2}) + ' tr';
 const norm = s => (s||'').replace(/\s+/g,' ').trim();
@@ -880,8 +882,11 @@ function buildSeries(){
   const raw = {};
   order.forEach(s=> raw[s]=[]);
 
+  const seenDates = new Set();
   for(let d=new Date(start); d<=last; d=addDays(d,1)){
     const k = toKey(d);
+    if(seenDates.has(k)) continue;
+    seenDates.add(k);
     labels.push(fmtShort(k));
     dates.push(k);
     const item = itemOf(state.snapshots[k], state.type);
@@ -1380,8 +1385,9 @@ function renderCurrentTable(){
     </tr>`;
   });
   tb.innerHTML = html;
+  const srcUp = formatSourceUpdate(snap.sourceUpdatedAt, snap.date);
   $('#latestInfo').innerHTML =
-    `Giá ngày <b>${fmtDmy(snap.date)}</b> · nguồn cập nhật: ${snap.sourceUpdatedAt||'—'} · ` +
+    `Giá ngày <b>${fmtDmy(snap.date)}</b> · ${srcUp.startsWith('lúc ') ? 'nguồn cập nhật ' + srcUp : 'nguồn cập nhật: ' + srcUp} · ` +
     `<span class="tag ${snap.origin==='live'?'live':'wb'}">${snap.origin==='live'?'Trực tiếp':'Wayback'}</span>`;
 }
 function renderHistoryTable(){
@@ -1400,7 +1406,7 @@ function renderHistoryTable(){
       <td class="num">${it?money(it.buy):'—'}</td>
       <td class="num">${it?money(it.sell):'—'}</td>
       <td class="num">${(it&&it.convert)?money(it.convert):'—'}</td>
-      <td class="muted">${s.sourceUpdatedAt||'—'}</td>
+      <td class="muted">${formatSourceTimeOnly(s.sourceUpdatedAt, k)}</td>
       <td><span class="tag ${s.origin==='live'?'live':'wb'}">${s.origin==='live'?'Trực tiếp':'Wayback'}</span></td>
     </tr>`;
   }).join('');
@@ -1410,8 +1416,9 @@ function renderBadge(){
   const el = $('#storeBadge');
   if(!keys.length){ el.textContent = 'Chưa có dữ liệu'; return; }
   const first = keys[0], last = keys[keys.length-1];
-  const lastFetched = state.snapshots[last].fetchedAt
-    ? new Date(state.snapshots[last].fetchedAt).toLocaleString('vi-VN') : '—';
+  const _fd = state.snapshots[last].fetchedAt ? new Date(state.snapshots[last].fetchedAt) : null;
+  const lastFetched = _fd ? (toKey(_fd)===last ? ('lúc '+_fd.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})) : _fd.toLocaleString('vi-VN')) : '—';
+
   el.innerHTML = `Đã lưu <b>${keys.length}</b> ngày · từ <b>${fmtDmy(first)}</b> đến <b>${fmtDmy(last)}</b> · lần lấy gần nhất: ${lastFetched}`;
 }
 function renderAll(){
