@@ -118,6 +118,10 @@
   .app-btn.ready{animation:appPulse 2.5s infinite}
   @keyframes appPulse{0%,100%{box-shadow:0 0 0 0 rgba(233,185,73,0)}50%{box-shadow:0 0 0 4px rgba(233,185,73,.25)}}
   .app-icon{font-size:16px;line-height:1}
+  .refresh-btn{height:42px;padding:0 13px;justify-content:center;font-size:13.5px;font-weight:600;flex:none;gap:6px}
+  .refresh-icon{font-size:15px;line-height:1;display:inline-block}
+  .refresh-btn.spinning .refresh-icon{animation:spinIcon .9s linear infinite}
+  @keyframes spinIcon{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
 
   .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0 12px}
   .spacer{flex:1}
@@ -291,6 +295,7 @@
     h1{font-size:clamp(12px, 3.8vw, 16px);line-height:1.2;white-space:nowrap;letter-spacing:-0.2px}
     .header-tools{width:100%;display:flex;flex-direction:column;gap:8px;margin-left:0}
     .header-actions{width:100%;display:flex;align-items:center;gap:8px;order:-1}
+    .refresh-btn{flex:1;height:40px;padding:0 10px;font-size:13px;font-weight:600;justify-content:center;gap:5px}
     .app-btn{flex:1;height:40px;padding:0 12px;font-size:13px;font-weight:600;justify-content:center;gap:6px}
     .theme-btn{width:40px;height:40px;padding:0;font-size:17px;flex:none}
     .theme-btn .theme-text{display:none}
@@ -404,6 +409,9 @@
     <div class="header-tools">
       <div class="badge" id="storeBadge">Chưa có dữ liệu</div>
       <div class="header-actions">
+        <button class="btn refresh-btn" id="btnRefresh" type="button" aria-label="Cập nhật giá vàng mới nhất" title="Lấy bảng giá mới nhất từ kimkhanhviethung.vn">
+          <span class="refresh-icon">🔄</span><span class="refresh-text">Cập nhật</span>
+        </button>
         <button class="btn app-btn" id="btnInstallApp" type="button" aria-label="Tải ứng dụng về màn hình chính" title="Tải ứng dụng về màn hình chính">
           <span class="app-icon">📲</span><span class="app-text">Tải app</span>
         </button>
@@ -1622,6 +1630,10 @@ function toggleTheme(){
 }
 
 /* ================= SỰ KIỆN ================= */
+const btnRefresh = $('#btnRefresh');
+if(btnRefresh){
+  btnRefresh.addEventListener('click', () => fetchLive(false));
+}
 $('#btnTheme').addEventListener('click', toggleTheme);
 if(window.matchMedia){
   window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', e => {
