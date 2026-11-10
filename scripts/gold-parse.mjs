@@ -28,28 +28,52 @@ export function parseGoldPage(html){
   // Chọn bảng chứa cột "Mua vào" (site render HTML thiếu thẻ </tr> nên tách theo <tr>)
   const tables = html.match(/<table[\s\S]*?<\/table>/gi) || [];
   const table = tables.find(t => /Mua vào/i.test(t)) || tables.find(t => /tag_a/i.test(t)) || null;
-  if(!table) return out;
+  if(table){
+    let group = 'Khác';
+    for(const row of table.split(/<tr\b/i).slice(1)){
+      const ths = row.match(/<th[\s\S]*?<\/th>/gi);
+      if(ths && ths.length){
+        const g = norm(ths[0]);
+        if(g) group = g;
+        continue;
+      }
+      const tds = row.match(/<td[\s\S]*?<\/td>/gi);
+      if(tds && tds.length >= 3){
+        const name = norm(tds[0]);
+        if(!name) continue;
+        out.items.push({
+          group,
+          name,
+          buy: digits(tds[1]),
+          sell: tds[2] ? digits(tds[2]) : 0,
+          convert: tds[3] ? digits(tds[3]) : 0
+        });
+      }
+    }
+    if(out.items.length) return out;
+  }
 
+  // Dự phòng: parse bảng Markdown (từ r.jina.ai)
   let group = 'Khác';
-  for(const row of table.split(/<tr\b/i).slice(1)){
-    const ths = row.match(/<th[\s\S]*?<\/th>/gi);
-    if(ths && ths.length){
-      const g = norm(ths[0]);
-      if(g) group = g;
+  for(const rawLine of String(html).split(/\r?\n/)){
+    const line = rawLine.trim();
+    if(!line.startsWith('|') || !line.endsWith('|')) continue;
+    const cells = line.slice(1, -1).split('|').map(c => c.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, '').trim());
+    if(cells.length < 3) continue;
+    if(cells.every(c => /^[-:\s]+$/.test(c))) continue;
+    if(/Mua vào/i.test(cells[1])){
+      if(cells[0]) group = norm(cells[0]);
       continue;
     }
-    const tds = row.match(/<td[\s\S]*?<\/td>/gi);
-    if(tds && tds.length >= 3){
-      const name = norm(tds[0]);
-      if(!name) continue;
-      out.items.push({
-        group,
-        name,
-        buy: digits(tds[1]),
-        sell: tds[2] ? digits(tds[2]) : 0,
-        convert: tds[3] ? digits(tds[3]) : 0
-      });
-    }
+    const name = norm(cells[0]);
+    if(!name) continue;
+    out.items.push({
+      group,
+      name,
+      buy: digits(cells[1]),
+      sell: cells[2] ? digits(cells[2]) : 0,
+      convert: cells[3] ? digits(cells[3]) : 0
+    });
   }
   return out;
 }
@@ -66,7 +90,7 @@ export function mergeSnapshot(store, key, snap){
     }
     const oldStr = JSON.stringify(old.items || []);
     const newStr = JSON.stringify(snap.items || []);
-    if(oldStr === newStr) return 'kept';
+    if(oldStr === newStr && old.sourceUpdatedAt === snap.sourceUpdatedAt) return 'kept';
   }
   if(String(old.fetchedAt || '') >= String(snap.fetchedAt || '')) return 'kept';
   store[key] = snap;

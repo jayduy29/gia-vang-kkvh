@@ -606,12 +606,56 @@ function getSeriesColor(s){
   return SERIES_META[s] ? SERIES_META[s].color : '#888888';
 }
 
-/* Chuỗi proxy: thử lần lượt khi bị CORS chặn (đã test: allorigins + corsfix hoạt động) */
+/* Chuỗi proxy: ưu tiên r.jina.ai (hỗ trợ CORS trực tiếp, nhanh, có cả HTML lẫn Markdown) rồi đến codetabs/allorigins */
 const PROXIES = [
-  u => u,                                                              // trực tiếp
-  u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
-  u => 'https://proxy.corsfix.com/?' + u,
-  u => 'https://api.allorigins.win/get?url=' + encodeURIComponent(u)   // JSON wrapper
+  {
+    name: 'jina-html',
+    timeout: 12000,
+    req: u => ({
+      url: 'https://r.jina.ai/' + u,
+      init: { headers: { 'X-Return-Format': 'html', 'X-No-Cache': 'true' }, cache: 'no-store' }
+    })
+  },
+  {
+    name: 'jina-md',
+    timeout: 10000,
+    req: u => ({
+      url: 'https://r.jina.ai/' + u,
+      init: { cache: 'no-store' }
+    })
+  },
+  {
+    name: 'codetabs',
+    timeout: 12000,
+    req: u => ({
+      url: 'https://api.codetabs.com/v1/proxy?quest=' + encodeURIComponent(u),
+      init: { cache: 'no-store' }
+    })
+  },
+  {
+    name: 'allorigins-raw',
+    timeout: 12000,
+    req: u => ({
+      url: 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u),
+      init: { cache: 'no-store' }
+    })
+  },
+  {
+    name: 'allorigins-get',
+    timeout: 12000,
+    req: u => ({
+      url: 'https://api.allorigins.win/get?url=' + encodeURIComponent(u) + '&disableCache=true',
+      init: { cache: 'no-store' }
+    })
+  },
+  {
+    name: 'trực tiếp',
+    timeout: 8000,
+    req: u => ({
+      url: u,
+      init: { cache: 'no-store' }
+    })
+  }
 ];
 
 /* ================= STATE ================= */
@@ -645,7 +689,8 @@ const formatSourceTimeOnly = (s, k) => { if(!s||s==='—') return '—'; const d
 const money = v => (v===null||v===undefined||isNaN(v)) ? '—' : Number(v).toLocaleString('vi-VN') + ' đ';
 const compact = v => (v/1e6).toLocaleString('vi-VN',{maximumFractionDigits:2}) + ' tr';
 const norm = s => (s||'').replace(/\s+/g,' ').trim();
-const num = el => { const t=(el.textContent||'').replace(/[^\d]/g,''); return t?parseInt(t,10):0; };
+const digits = s => { const t=String(s||'').replace(/[^\d]/g,''); return t?parseInt(t,10):0; };
+const num = el => digits(el ? el.textContent : '');
 const dmyToIso = s => { const m=(s||'').match(/(\d{2})\/(\d{2})\/(\d{4})/); return m?`${m[3]}-${m[2]}-${m[1]}`:null; };
 
 function loadStore(){
@@ -700,47 +745,38 @@ function log(msg){
 }
 function setBusy(b){
   state.busy = b;
+  const btn = $('#btnRefresh');
+  if(btn){
+    btn.disabled = b;
+    btn.classList.toggle('spinning', Boolean(b));
+  }
 }
 
 /* ================= FETCH QUA PROXY ================= */
-async function fetchWithTimeout(url, ms){
+async function fetchWithTimeout(url, init, ms){
   const ctrl = new AbortController();
   const timer = setTimeout(()=>ctrl.abort(), ms);
-  try{ return await fetch(url, {signal: ctrl.signal}); }
+  try{ return await fetch(url, Object.assign({}, init || {}, {signal: ctrl.signal})); }
   finally{ clearTimeout(timer); }
 }
-async function fetchText(url){
-  const errs = [];
-  for(let i=0;i<PROXIES.length;i++){
-    const target = PROXIES[i](url);
-    try{
-      const res = await fetchWithTimeout(target, i===0?15000:30000);
-      if(!res.ok) throw new Error('HTTP '+res.status);
-      let text = await res.text();
-      // allorigins /get trả về JSON bọc {contents: "..."} — bóc ra
-      if(text.trim().startsWith('{"contents"')){
-        try{ const j = JSON.parse(text.trim()); if(typeof j.contents==='string') text = j.contents; }catch(e){}
-      }
-      if(text && text.length > 400) return text;
-      throw new Error('phản hồi rỗng/quá ngắn');
-    }catch(e){
-      errs.push(`${i===0?'trực tiếp':'proxy'+i}: ${e.message}`);
-    }
-  }
-  throw new Error(errs.join(' | '));
-}
 
-/* ================= PARSE BẢNG GIÁ ================= */
+/* ================= PARSE BẢNG GIÁ (HTML & MARKDOWN) ================= */
 function parseGoldPage(html){
-  const doc = new DOMParser().parseFromString(html, 'text/html');
+  if(!html) return {sourceUpdatedAt: null, items: []};
   let sourceUpdatedAt = null;
-  doc.querySelectorAll('.sub_tieude_gc, b').forEach(el=>{
-    const t = el.textContent || '';
-    if(/Ngày cập nhật/i.test(t)){
-      const m = t.match(/\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}/);
-      if(m) sourceUpdatedAt = m[0];
-    }
-  });
+  const rawMatch = String(html).match(/Ngày cập nhật:\s*(\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2})/);
+  if(rawMatch) sourceUpdatedAt = rawMatch[1];
+
+  const doc = new DOMParser().parseFromString(html, 'text/html');
+  if(!sourceUpdatedAt){
+    doc.querySelectorAll('.sub_tieude_gc, b, strong').forEach(el=>{
+      const t = el.textContent || '';
+      if(/Ngày cập nhật/i.test(t)){
+        const m = t.match(/\d{2}\/\d{2}\/\d{4}\s+\d{2}:\d{2}:\d{2}/);
+        if(m) sourceUpdatedAt = m[0];
+      }
+    });
+  }
   const table = doc.querySelector('.table_goldprice table') || doc.querySelector('table');
   const items = [];
   if(table){
@@ -762,17 +798,70 @@ function parseGoldPage(html){
       }
     });
   }
+  if(items.length) return {sourceUpdatedAt, items};
+
+  // Dự phòng: parse bảng Markdown (từ r.jina.ai)
+  let group = 'Khác';
+  for(const rawLine of String(html).split(/\r?\n/)){
+    const line = rawLine.trim();
+    if(!line.startsWith('|') || !line.endsWith('|')) continue;
+    const cells = line.slice(1, -1).split('|').map(c => c.replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\*\*/g, '').trim());
+    if(cells.length < 3) continue;
+    if(cells.every(c => /^[-:\s]+$/.test(c))) continue;
+    if(/Mua vào/i.test(cells[1])){
+      if(cells[0]) group = norm(cells[0]);
+      continue;
+    }
+    const name = norm(cells[0]);
+    if(!name) continue;
+    items.push({
+      group,
+      name,
+      buy: digits(cells[1]),
+      sell: cells[2] ? digits(cells[2]) : 0,
+      convert: cells[3] ? digits(cells[3]) : 0
+    });
+  }
   return {sourceUpdatedAt, items};
 }
 
+async function fetchLiveParsed(url){
+  const errs = [];
+  for(let i=0;i<PROXIES.length;i++){
+    const p = PROXIES[i];
+    const {url: target, init} = p.req(url);
+    try{
+      const res = await fetchWithTimeout(target, init, p.timeout || 12000);
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      let text = await res.text();
+      if(text.trim().startsWith('{"contents"')){
+        try{ const j = JSON.parse(text.trim()); if(typeof j.contents==='string') text = j.contents; }catch(e){}
+      }
+      if(!text || text.length <= 200) throw new Error('phản hồi rỗng/quá ngắn');
+      const parsed = parseGoldPage(text);
+      if(parsed.items && parsed.items.length){
+        return parsed;
+      }
+      throw new Error('không tìm thấy bảng giá');
+    }catch(e){
+      errs.push(`${p.name}: ${e.message}`);
+    }
+  }
+  throw new Error(errs.join(' | '));
+}
+
 /* ================= LẤY GIÁ HIỆN TẠI ================= */
-async function fetchLive(){
+async function fetchLive(silent = false){
+  if(state.busy) return;
   setBusy(true);
-  setStatus('Đang lấy bảng giá hiện tại từ kimkhanhviethung.vn …', 'run');
+  if(!silent){
+    setStatus('Đang lấy bảng giá hiện tại từ kimkhanhviethung.vn …', 'run');
+  }
   log('Bắt đầu lấy giá trực tiếp…');
   try{
-    const html = await fetchText(SITE_URL);
-    const parsed = parseGoldPage(html);
+    // Đồng bộ lại data/gold.json trước phòng trường hợp Action vừa cập nhật
+    await loadRemote();
+    const parsed = await fetchLiveParsed(SITE_URL);
     if(!parsed.items.length) throw new Error('không parse được bảng giá (phản hồi khác mong đợi)');
     const key = (parsed.sourceUpdatedAt && dmyToIso(parsed.sourceUpdatedAt)) || todayKey();
     state.snapshots[key] = {
@@ -789,7 +878,11 @@ async function fetchLive(){
     log(`Cập nhật OK: ${key}, ${parsed.items.length} loại`);
     renderAll();
   }catch(e){
-    setStatus('✗ Cập nhật thất bại: ' + e.message, 'err');
+    if(!silent || !sortedKeys().length){
+      setStatus('✗ Cập nhật trực tiếp thất bại: ' + e.message, 'err');
+    }else{
+      setStatus('');
+    }
     log('Lỗi cập nhật: ' + e.message);
   }finally{
     setBusy(false);
@@ -799,13 +892,17 @@ async function fetchLive(){
 async function autoFetch(){
   if(state.busy) return;
   const now = Date.now();
-  const remoteFresh = (state.meta.remoteFetchedAt || 0) > now - 36*3600*1000;   // Action lấy trong 36h qua
-  const localFresh  = (state.meta.lastFetchAt   || 0) > now -  6*3600*1000;      // bản ghi cục bộ trong 6h qua
-  if(remoteFresh || localFresh){
+  const today = todayKey();
+  const hasToday = Boolean(state.snapshots[today]);
+  const latest = latestKey() ? state.snapshots[latestKey()] : null;
+  const latestFetchedMs = latest && latest.fetchedAt ? (Date.parse(latest.fetchedAt) || 0) : 0;
+  const lastCheckMs = Math.max(latestFetchedMs, state.meta.lastFetchAt || 0);
+  // Nếu chưa có dữ liệu ngày hôm nay, hoặc lần lấy gần nhất đã quá 30 phút -> tự động kiểm tra giá mới
+  if(hasToday && (now - lastCheckMs < 30 * 60 * 1000)){
     setStatus('');
     return;
   }
-  await fetchLive();   // dữ liệu máy chủ đã cũ → thử lấy trực tiếp làm dự phòng
+  await fetchLive(hasToday);   // nếu đã có dữ liệu hôm nay thì chạy nền êm (silent=true)
 }
 
 /* ================= LOẠI VÀNG ================= */
@@ -1836,7 +1933,9 @@ if(installModal){
 // Đăng ký Service Worker
 if('serviceWorker' in navigator){
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
+    navigator.serviceWorker.register('sw.js').then(reg => {
+      reg.update().catch(() => {});
+    }).catch(() => {});
   });
 }
 

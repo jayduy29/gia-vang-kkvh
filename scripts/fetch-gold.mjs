@@ -83,8 +83,19 @@ function saveStore(store){
 /* ---------- 1) Lấy bảng giá hiện tại ---------- */
 async function runLive(store){
   log('Lấy bảng giá hiện tại:', SITE_URL);
-  const html = await getText(SITE_URL);
-  const parsed = parseGoldPage(html);
+  let html = '';
+  try{
+    html = await getText(SITE_URL, 30000, 3);
+  }catch(e){
+    log('  trực tiếp lỗi (' + e.message + '), thử qua r.jina.ai…');
+    html = await getText('https://r.jina.ai/' + SITE_URL, 30000, 2);
+  }
+  let parsed = parseGoldPage(html);
+  if(!parsed.items.length){
+    log('  parse lần 1 ra 0 dòng, thử dự phòng qua r.jina.ai…');
+    const fallbackHtml = await getText('https://r.jina.ai/' + SITE_URL, 30000, 2);
+    parsed = parseGoldPage(fallbackHtml);
+  }
   if(!parsed.items.length) throw new Error('parse ra 0 dòng — cấu trúc trang có thể đã thay đổi');
   const key = (parsed.sourceUpdatedAt && dmyToIso(parsed.sourceUpdatedAt)) || isoDay(new Date());
   const res = mergeSnapshot(store, key, {
@@ -165,7 +176,7 @@ async function main(){
   }
   try{
     const r = await runLive(store);
-    saved += (r === 'added' ? 1 : 0);
+    saved += ((r === 'added' || r === 'updated') ? 1 : 0);
     liveOk = true;
   }catch(e){
     console.error('::error::Lấy giá hiện tại thất bại: ' + e.message);
@@ -175,8 +186,12 @@ async function main(){
     console.error('::error::Không thu thập được dữ liệu nào');
     process.exit(1);
   }
-  saveStore(store);
-  log(`Đã ghi data/gold.json · tổng ${Object.keys(store).length} ngày`);
+  if(saved > 0 || !existsSync(DATA_FILE)){
+    saveStore(store);
+    log(`Đã ghi data/gold.json · tổng ${Object.keys(store).length} ngày`);
+  }else{
+    log(`Dữ liệu không đổi · giữ nguyên data/gold.json (${Object.keys(store).length} ngày)`);
+  }
   if(!liveOk) process.exit(2);   // có dữ liệu backfill nhưng lỗi giá hiện tại → Action vẫn báo đỏ
 }
 
