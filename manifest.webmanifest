@@ -1,13 +1,13 @@
 {
-  "name": "Giá Vàng Kim Khánh Việt Hùng",
-  "short_name": "Giá Vàng KKVH",
+  "name": "Tra Giá Vàng KKVH — Cập nhật & Tra cứu",
+  "short_name": "Tra Giá Vàng",
   "description": "Tra cứu giá vàng Kim Khánh Việt Hùng, biểu đồ biến động và so sánh giá",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#0b1020",
-  "theme_color": "#0b1020",
+  "background_color": "#061224",
+  "theme_color": "#061224",
   "lang": "vi",
   "icons": [
     {
@@ -21,6 +21,18 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "logo.png",
+      "sizes": "280x280",
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "icon.svg",

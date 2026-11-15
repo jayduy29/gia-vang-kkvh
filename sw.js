@@ -1,8 +1,11 @@
-const CACHE_NAME = 'kkvh-gold-v6';
+const CACHE_NAME = 'kkvh-gold-v7';
 const PRECACHE_ASSETS = [
   './',
   'index.html',
   'manifest.webmanifest',
+  'logo.png',
+  'favicon.png',
+  'apple-touch-icon.png',
   'icon-192.png',
   'icon-512.png',
   'icon.svg',
