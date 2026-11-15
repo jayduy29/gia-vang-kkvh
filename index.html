@@ -329,12 +329,6 @@
     #currentTable td:first-child{width:48%}
     #currentTable td:nth-child(2),#currentTable td:nth-child(3){width:26%;font-size:11px}
     #currentTable tr.group-row td{font-size:11px}
-    #historyTable th:nth-child(4),#historyTable td:nth-child(4),
-    #historyTable th:nth-child(5),#historyTable td:nth-child(5),
-    #historyTable th:nth-child(6),#historyTable td:nth-child(6){display:none}
-    #historyTable th:first-child,#historyTable td:first-child{width:26%}
-    #historyTable th:nth-child(2),#historyTable td:nth-child(2),
-    #historyTable th:nth-child(3),#historyTable td:nth-child(3){width:37%;font-size:11px}
     .compare-points{grid-template-columns:1fr auto 1fr;gap:6px}
     .cmp-point-card{padding:6px 8px}
     .cmp-card-top{flex-direction:column;align-items:flex-start;gap:4px}
@@ -556,20 +550,6 @@
       <span class="muted" id="latestInfo"></span>
     </div>
     <div class="table-wrap"><table id="currentTable"><tbody></tbody></table></div>
-  </section>
-
-  <section class="panel">
-    <div class="panel-head">
-      <h2>Lịch sử theo ngày</h2>
-      <span class="muted" id="histInfo"></span>
-    </div>
-    <div class="table-wrap"><table id="historyTable">
-      <thead><tr>
-        <th>Ngày</th><th class="num">Mua vào</th><th class="num">Bán ra</th><th class="num">Giá quy đổi</th>
-        <th>Cập nhật từ nguồn</th><th>Nguồn</th>
-      </tr></thead>
-      <tbody></tbody>
-    </table></div>
   </section>
 
   <footer>
@@ -1521,25 +1501,7 @@ function renderCurrentTable(){
     `<span class="tag ${snap.origin==='live'?'live':'wb'}">${snap.origin==='live'?'Trực tiếp':'Wayback'}</span>`;
 }
 function renderHistoryTable(){
-  const keys = rangeKeys().reverse();
-  const tb = $('#historyTable tbody');
-  $('#histInfo').textContent = `${keys.length} ngày · loại: ${state.type?state.type.split('||')[1]:'—'}`;
-  if(!keys.length){
-    tb.innerHTML = `<tr><td colspan="6" class="muted" style="padding:18px">Chưa có dữ liệu trong khoảng này.</td></tr>`;
-    return;
-  }
-  tb.innerHTML = keys.map(k=>{
-    const s = state.snapshots[k];
-    const it = itemOf(s, state.type);
-    return `<tr>
-      <td>${fmtDmy(k)}</td>
-      <td class="num">${it?money(it.buy):'—'}</td>
-      <td class="num">${it?money(it.sell):'—'}</td>
-      <td class="num">${(it&&it.convert)?money(it.convert):'—'}</td>
-      <td class="muted">${formatSourceTimeOnly(s.sourceUpdatedAt, k)}</td>
-      <td><span class="tag ${s.origin==='live'?'live':'wb'}">${s.origin==='live'?'Trực tiếp':'Wayback'}</span></td>
-    </tr>`;
-  }).join('');
+  // Bảng lịch sử theo ngày đã được lược bỏ
 }
 function renderBadge(){
   const keys = sortedKeys();
