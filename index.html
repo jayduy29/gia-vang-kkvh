@@ -468,7 +468,6 @@
           <button class="chip sell active" data-series="sell">Bán ra</button>
         </div>
       </div>
-      <label class="check"><input type="checkbox" id="ffill" checked> Kéo giá các ngày chưa có dữ liệu</label>
       </div>
     </div>
     <div class="chart-wrap">
@@ -1793,7 +1792,10 @@ if(btnZoomOut){
     applyWheelZoom(-1); // −: Giảm số ngày (bớt ngày)
   });
 }
-$('#ffill').addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); renderCompareBox(); });
+const ffillEl = $('#ffill');
+if(ffillEl){
+  ffillEl.addEventListener('change', e=>{ state.fill = e.target.checked; renderChart(); renderCompareBox(); });
+}
 
 /* Sự kiện tính năng so sánh 2 điểm */
 const btnToggleCompare = $('#btnToggleCompare');
