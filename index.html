@@ -156,104 +156,104 @@
   .card .d{font-size:11px;color:var(--muted);margin-top:2px}
   .up{color:var(--green)} .down{color:var(--red)} .flat{color:var(--muted)}
 
-  .panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin-bottom:16px;box-shadow:var(--shadow-panel)}
-  .panel-head{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:12px}
-  .panel h2{font-size:16px;margin:0}
-  .muted{color:var(--muted);font-size:13px}
-  .controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:12px;box-shadow:var(--shadow-panel)}
+  .panel-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .panel h2{font-size:15px;margin:0}
+  .muted{color:var(--muted);font-size:12.5px}
+  .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   select{
     background:var(--input-bg);color:var(--txt);border:1px solid var(--line);
-    border-radius:9px;padding:7px 10px;font-size:14px;max-width:320px
+    border-radius:8px;padding:6px 9px;font-size:13.5px;max-width:320px
   }
-  .chips{display:flex;gap:6px;flex-wrap:wrap}
-  .chart-chip-row{display:flex;align-items:center;gap:10px}
+  .chips{display:flex;gap:5px;flex-wrap:wrap}
+  .chart-chip-row{display:flex;align-items:center;gap:8px}
   .chart-chip-row .chips{flex-wrap:nowrap}
   .chip{
     border:1px solid var(--line);background:var(--chip-bg);color:var(--muted);
-    padding:6px 12px;border-radius:999px;font-size:13px;cursor:pointer;transition:.15s
+    padding:5px 10px;border-radius:999px;font-size:12.5px;cursor:pointer;transition:.15s
   }
   .chip:hover{border-color:var(--chip-hover-border);color:var(--txt)}
   .chip.active{background:var(--chip-active-bg);border-color:var(--chip-active-border);color:var(--chip-active-color)}
   .chip.active.buy{background:var(--chip-buy-bg);border-color:var(--chip-buy-border);color:var(--chip-buy-color)}
   .chip.active.sell{background:var(--chip-sell-bg);border-color:var(--chip-sell-border);color:var(--chip-sell-color)}
   .chip.active.convert{background:var(--chip-convert-bg);border-color:var(--chip-convert-border);color:var(--chip-convert-color)}
-  .check{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);cursor:pointer}
+  .check{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);cursor:pointer}
 
-  .chart-wrap{position:relative;height:380px;cursor:crosshair;touch-action:pan-y}
+  .chart-wrap{position:relative;height:320px;cursor:crosshair;touch-action:pan-y}
   #chart{touch-action:pan-y}
   .chart-zoom-controls{
-    position:absolute;right:10px;top:10px;display:flex;flex-direction:column;gap:5px;z-index:5
+    position:absolute;right:8px;top:8px;display:flex;flex-direction:column;gap:4px;z-index:5
   }
   .zoom-btn{
-    width:32px;height:32px;border-radius:8px;border:1px solid var(--line);
-    background:var(--panel);color:var(--txt);font-size:17px;font-weight:700;
+    width:30px;height:30px;border-radius:7px;border:1px solid var(--line);
+    background:var(--panel);color:var(--txt);font-size:16px;font-weight:700;
     display:flex;align-items:center;justify-content:center;cursor:pointer;
     box-shadow:var(--shadow-card);transition:.15s;padding:0;line-height:1;
     touch-action:manipulation;user-select:none;-webkit-user-select:none
   }
   .zoom-btn:hover{border-color:var(--gold2);color:var(--gold2);background:var(--panel2)}
   .zoom-btn:active{transform:scale(.92)}
-  .table-wrap{overflow-x:hidden;overflow-y:auto;max-height:460px;border:1px solid var(--line);border-radius:12px}
-  table{width:100%;border-collapse:collapse;font-size:14px;table-layout:fixed}
+  .table-wrap{overflow-x:hidden;overflow-y:auto;max-height:280px;border:1px solid var(--line);border-radius:10px}
+  table{width:100%;border-collapse:collapse;font-size:13px;table-layout:fixed}
   thead th{
     position:sticky;top:0;background:var(--th-bg);color:var(--th-txt);text-align:left;
-    padding:9px 12px;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;z-index:1
+    padding:7px 10px;font-size:11.5px;text-transform:uppercase;letter-spacing:.3px;z-index:1
   }
-  tbody td{padding:8px 12px;border-top:1px solid var(--tr-border)}
+  tbody td{padding:6px 10px;border-top:1px solid var(--tr-border)}
   tbody tr:hover{background:var(--tr-hover)}
   td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-  tr.group-row td{background:var(--tr-group-bg);color:var(--tr-group-txt);font-weight:700;font-size:13px;letter-spacing:.4px}
+  tr.group-row td{background:var(--tr-group-bg);color:var(--tr-group-txt);font-weight:700;font-size:12px;letter-spacing:.3px;padding:5px 10px}
   tr.selected-row td{background:var(--tr-selected)}
   .tag{display:inline-block;padding:2px 8px;border-radius:999px;font-size:11.5px;border:1px solid}
   .tag.live{color:var(--tag-live-txt);border-color:var(--tag-live-border);background:var(--tag-live-bg)}
   .tag.wb{color:var(--tag-wb-txt);border-color:var(--tag-wb-border);background:var(--tag-wb-bg)}
   .compare-box{
     background:var(--panel2);border:1px solid var(--line);border-radius:14px;
-    padding:14px 16px;margin-top:14px;transition:.2s
+    padding:12px 14px;margin-top:12px;transition:.2s
   }
   .compare-box[hidden]{display:none}
-  .compare-header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;flex-wrap:wrap}
-  .compare-title{display:flex;align-items:center;gap:8px;font-size:15px;color:var(--txt)}
-  .compare-icon{font-size:18px}
+  .compare-header{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+  .compare-title{display:flex;align-items:center;gap:6px;font-size:14px;color:var(--txt)}
+  .compare-icon{font-size:16px}
   .compare-badge{
     background:var(--panel);border:1px solid var(--line);border-radius:999px;
-    padding:3px 10px;font-size:12px;color:var(--gold2);font-weight:700
+    padding:2px 8px;font-size:11.5px;color:var(--gold2);font-weight:700
   }
-  .compare-points{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .compare-points{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px}
   .cmp-point-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;
-    padding:12px 14px;flex:1;min-width:240px
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:8px 10px;min-width:0
   }
-  .cmp-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+  .cmp-card-top{display:flex;align-items:center;justify-content:space-between;gap:6px;margin-bottom:6px}
   .cmp-point-tag{
-    display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:6px;
-    font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px
+    display:inline-flex;align-items:center;gap:4px;padding:2px 6px;border-radius:5px;
+    font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap
   }
   .cmp-point-tag.a{background:rgba(255,170,0,.15);color:#ffaa00;border:1px solid rgba(255,170,0,.35)}
   .cmp-point-tag.b{background:rgba(0,229,255,.15);color:#00bcd4;border:1px solid rgba(0,229,255,.35)}
   .cmp-select{
     background:var(--input-bg);color:var(--txt);border:1px solid var(--line);
-    border-radius:8px;padding:5px 8px;font-size:13px;max-width:180px
+    border-radius:7px;padding:3px 6px;font-size:12px;max-width:130px;width:100%
   }
-  .cmp-prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:13px}
-  .cmp-plabel{color:var(--muted);display:block;font-size:11px}
-  .cmp-pval{font-weight:700;color:var(--txt);font-size:14px}
-  .compare-arrow{font-size:20px;color:var(--gold2);font-weight:700;flex:none}
+  .cmp-prices-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;font-size:12px}
+  .cmp-plabel{color:var(--muted);display:block;font-size:10px;line-height:1.2}
+  .cmp-pval{font-weight:700;color:var(--txt);font-size:12.5px;line-height:1.3}
+  .compare-arrow{font-size:16px;color:var(--gold2);font-weight:700;text-align:center;line-height:1}
   .compare-results{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px;margin-top:10px
   }
   .compare-results[hidden]{display:none}
   .cmp-stat-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px
+    background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px 10px
   }
   .cmp-stat-card.highlight{
-    background:linear-gradient(145deg,rgba(233,185,73,.12),rgba(78,168,255,.08));
-    border-color:rgba(233,185,73,.4)
+    background:linear-gradient(145deg,rgba(233,185,73,.14),rgba(78,168,255,.08));
+    border-color:rgba(233,185,73,.45)
   }
-  .cmp-stat-title{font-size:12px;color:var(--muted);font-weight:600}
-  .cmp-stat-val{font-size:18px;font-weight:700;margin-top:4px}
-  .cmp-stat-sub{font-size:12px;margin-top:2px;font-weight:600}
-  .cmp-note{font-size:12px;color:var(--muted);margin-top:8px;font-style:italic}
+  .cmp-stat-title{font-size:11px;color:var(--muted);font-weight:600;line-height:1.3}
+  .cmp-stat-val{font-size:15px;font-weight:700;margin-top:2px;line-height:1.3}
+  .cmp-stat-sub{font-size:11px;margin-top:1px;font-weight:600;line-height:1.3}
+  .cmp-note{font-size:11px;color:var(--muted);margin-top:6px;font-style:italic;line-height:1.3}
   .cmp-note[hidden]{display:none}
 
   .modal-backdrop{
@@ -319,10 +319,10 @@
     #seriesChips{flex:1}
     .chart-chip-row .chip{min-width:0;min-height:40px;padding:4px 1px;font-size:clamp(8px,2.5vw,11px);line-height:1.15;white-space:normal;justify-content:center;text-align:center}
     .check{min-height:36px}
-    .chart-wrap{height:300px}
-    .chart-zoom-controls{right:8px;top:8px;gap:4px}
-    .zoom-btn{width:30px;height:30px;font-size:15px}
-    .table-wrap{overflow-x:hidden}
+    .chart-wrap{height:280px}
+    .chart-zoom-controls{right:6px;top:6px;gap:3px}
+    .zoom-btn{width:28px;height:28px;font-size:14px}
+    .table-wrap{overflow-x:hidden;max-height:240px}
     table{font-size:12px}
     thead th{padding:8px 5px;font-size:10px;letter-spacing:0}
     tbody td{padding:8px 5px;overflow-wrap:anywhere}
@@ -335,9 +335,20 @@
     #historyTable th:first-child,#historyTable td:first-child{width:26%}
     #historyTable th:nth-child(2),#historyTable td:nth-child(2),
     #historyTable th:nth-child(3),#historyTable td:nth-child(3){width:37%;font-size:11px}
-    .compare-points{flex-direction:column;align-items:stretch}
-    .compare-arrow{text-align:center;transform:rotate(90deg);margin:-4px 0}
-    .compare-results{grid-template-columns:1fr}
+    .compare-points{grid-template-columns:1fr auto 1fr;gap:6px}
+    .cmp-point-card{padding:6px 8px}
+    .cmp-card-top{flex-direction:column;align-items:flex-start;gap:4px}
+    .cmp-select{max-width:none;width:100%;font-size:11px;padding:3px 4px}
+    .cmp-prices-grid{grid-template-columns:1fr;gap:3px}
+    .cmp-plabel{font-size:9.5px}
+    .cmp-pval{font-size:11.5px}
+    .compare-arrow{font-size:14px}
+    .compare-results{grid-template-columns:1fr 1fr;gap:6px}
+    .cmp-stat-card{padding:7px 8px}
+    .cmp-stat-card:nth-child(3){grid-column:1 / -1}
+    .cmp-stat-title{font-size:10px}
+    .cmp-stat-val{font-size:13.5px}
+    .cmp-stat-sub{font-size:10.5px}
   }
 </style>
 </head>
@@ -431,7 +442,7 @@
     </div>
   </section>
 
-  <div class="status" id="status" hidden>Sẵn sàng. Đang kiểm tra giá mới…</div>
+  <div class="status" id="status" hidden></div>
 
   <section class="cards" id="stats"></section>
 
@@ -563,14 +574,7 @@
   </section>
 
   <footer>
-    <p class="source-credit">Nguồn bảng giá: <a href="https://kimkhanhviethung.vn/tra-cuu-gia-vang.html" target="_blank" rel="noopener">kimkhanhviethung.vn/tra-cuu-gia-vang.html</a> · Đơn vị tính: Đồng/chỉ</p>
-    <b>Cách hoạt động:</b>
-    <ul>
-      <li><b>Dữ liệu chung lưu tại <code>data/gold.json</code> trong repo GitHub</b> — GitHub Action tự động thu thập bảng giá 3 lần/ngày lúc 10:00, 14:00 và 16:00 (giờ VN) rồi commit; ai mở web cũng thấy cùng một dữ liệu, không phụ thuộc trình duyệt.</li>
-      <li>Khi bạn mở trang, app tự tải <code>data/gold.json</code> rồi gộp với bản ghi cục bộ (localStorage). Dữ liệu chung được GitHub Action cập nhật hằng ngày; nếu dữ liệu máy chủ quá cũ, app tự thử lấy giá mới trực tiếp.</li>
-      <li>Các công cụ nhập/xuất dữ liệu được ẩn sau nút ổ khóa và mật khẩu.</li>
-      <li>Giá website mang tính tham khảo, giao dịch theo bảng giá niêm yết tại cửa hàng.</li>
-    </ul>
+    <p class="source-credit">Nguồn bảng giá: <a href="https://kimkhanhviethung.vn/tra-cuu-gia-vang.html" target="_blank" rel="noopener">kimkhanhviethung.vn/tra-cuu-gia-vang.html</a> · Đơn vị tính: Đồng/chỉ · Giá website mang tính tham khảo, giao dịch theo giá niêm yết tại cửa hàng.</p>
   </footer>
 </div>
 
@@ -740,12 +744,30 @@ function saveMeta(){ try{ localStorage.setItem(META_KEY, JSON.stringify(state.me
 const sortedKeys = () => Object.keys(state.snapshots).sort();
 const latestKey = () => { const k=sortedKeys(); return k.length?k[k.length-1]:null; };
 
-function setStatus(msg, cls){
+let statusTimer = null;
+function setStatus(msg, cls, autoHideMs = 0){
+  if(statusTimer){ clearTimeout(statusTimer); statusTimer = null; }
   const el = $('#status');
+  if(!el) return;
+  if(!msg){
+    el.hidden = true;
+    el.textContent = '';
+    el.className = 'status';
+    return;
+  }
   el.textContent = msg;
   el.title = msg;
-  el.hidden = !msg;
-  el.className = 'status' + (cls?(' '+cls):'');
+  el.hidden = false;
+  el.className = 'status' + (cls ? (' ' + cls) : '');
+
+  const delay = autoHideMs || (cls === 'ok' ? 3500 : (cls === 'err' ? 5000 : 0));
+  if(delay > 0){
+    statusTimer = setTimeout(() => {
+      el.hidden = true;
+      el.textContent = '';
+      statusTimer = null;
+    }, delay);
+  }
 }
 function log(msg){
   state.logs.unshift({t: new Date().toLocaleTimeString('vi-VN'), msg});
@@ -1956,7 +1978,6 @@ if('serviceWorker' in navigator){
   const initialTheme = getPreferredTheme();
   setTheme(initialTheme, false);
   loadStore();
-  setStatus('Đang tải dữ liệu máy chủ (data/gold.json)…', 'run');
   const remote = await loadRemote();
   renderAll();
   if(remote.ok){
@@ -1966,6 +1987,7 @@ if('serviceWorker' in navigator){
   }
   log('Ứng dụng khởi động · ' + sortedKeys().length + ' ngày dữ liệu trong bộ nhớ');
   await autoFetch();                       // lấy giá hiện tại nếu chưa có trong 6 giờ qua
+  setStatus('');                          // ẩn thanh thông báo khi khởi tạo xong
   setInterval(autoFetch, 15*60*1000);     // kiểm tra mỗi 15 phút khi mở trang
 })();
 </script>

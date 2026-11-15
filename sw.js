@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kkvh-gold-v2';
+const CACHE_NAME = 'kkvh-gold-v3';
 const PRECACHE_ASSETS = [
   './',
   'index.html',
