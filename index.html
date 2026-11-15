@@ -904,12 +904,16 @@ async function fetchLive(silent = false){
     saveStore();
     state.meta.lastFetchAt = Date.now();
     saveMeta();
-    setStatus(`✓ Đã cập nhật: giá ngày ${fmtDmy(key)} — ${parsed.items.length} loại (nguồn cập nhật ${parsed.sourceUpdatedAt || 'không rõ'}).`, 'ok');
+    if(!silent){
+      setStatus(`✓ Đã cập nhật giá mới nhất (${parsed.sourceUpdatedAt || fmtDmy(key)}).`, 'ok', 3000);
+    }else{
+      setStatus('');
+    }
     log(`Cập nhật OK: ${key}, ${parsed.items.length} loại`);
     renderAll();
   }catch(e){
-    if(!silent || !sortedKeys().length){
-      setStatus('✗ Cập nhật trực tiếp thất bại: ' + e.message, 'err');
+    if(!silent){
+      setStatus('✗ Cập nhật thất bại: ' + e.message, 'err', 4000);
     }else{
       setStatus('');
     }
