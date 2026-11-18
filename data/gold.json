@@ -1,8 +1,8 @@
 {
  "site": "https://kimkhanhviethung.vn/tra-cuu-gia-vang.html",
  "unit": "Đồng/chỉ",
- "generatedAt": "2026-11-17T16:56:32.587Z",
- "days": 39,
+ "generatedAt": "2026-11-18T10:18:08.956Z",
+ "days": 40,
  "snapshots": {
   "2026-10-09": {
    "date": "2026-10-09",
@@ -4134,6 +4134,112 @@
      "name": "Bạc Trang sức",
      "buy": 90000,
      "sell": 210000,
+     "convert": 0
+    }
+   ]
+  },
+  "2026-11-18": {
+   "date": "2026-11-18",
+   "sourceUpdatedAt": "18/11/2026 15:00:49",
+   "fetchedAt": "2026-11-18T10:18:08.956Z",
+   "origin": "live",
+   "items": [
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng 999.9",
+     "buy": 12440000,
+     "sell": 12620000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng Nhẫn Khâu 98",
+     "buy": 12100000,
+     "sell": 12260000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng Nhẫn Khâu 97 ( Quảng Nam )",
+     "buy": 11930000,
+     "sell": 12090000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng Nhẫn Khâu 96",
+     "buy": 11750000,
+     "sell": 11910000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Nữ trang 980",
+     "buy": 12110000,
+     "sell": 12440000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng NL Ngoài 9999",
+     "buy": 12340000,
+     "sell": 0,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng NL Ngoài 999",
+     "buy": 12290000,
+     "sell": 0,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 417 ( KKVH)",
+     "name": "Vàng 41.7",
+     "buy": 5210000,
+     "sell": 5520000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 417 ( KKVH)",
+     "name": "Vàng 41.7 W (Trắng)",
+     "buy": 5260000,
+     "sell": 5600000,
+     "convert": 5500000
+    },
+    {
+     "group": "Vàng công ty",
+     "name": "Vàng công ty 610",
+     "buy": 7450000,
+     "sell": 7820000,
+     "convert": 7650000
+    },
+    {
+     "group": "Vàng công ty",
+     "name": "Vàng đúc",
+     "buy": 7590000,
+     "sell": 7960000,
+     "convert": 7790000
+    },
+    {
+     "group": "BẠC",
+     "name": "Bạc Thỏi Phát Lộc (1 kilo)",
+     "buy": 41330000,
+     "sell": 43860000,
+     "convert": 0
+    },
+    {
+     "group": "BẠC",
+     "name": "Bạc Miếng Phát Lộc ( 1 Lượng )",
+     "buy": 1555000,
+     "sell": 1650000,
+     "convert": 0
+    },
+    {
+     "group": "BẠC",
+     "name": "Bạc Trang sức",
+     "buy": 85000,
+     "sell": 180000,
      "convert": 0
     }
    ]
