@@ -1,7 +1,7 @@
 {
  "site": "https://kimkhanhviethung.vn/tra-cuu-gia-vang.html",
  "unit": "Đồng/chỉ",
- "generatedAt": "2026-11-23T10:53:45.027Z",
+ "generatedAt": "2026-11-23T19:18:15.828Z",
  "days": 45,
  "snapshots": {
   "2026-10-09": {
@@ -4670,56 +4670,56 @@
   },
   "2026-11-23": {
    "date": "2026-11-23",
-   "sourceUpdatedAt": "23/11/2026 16:23:09",
-   "fetchedAt": "2026-11-23T10:53:45.027Z",
+   "sourceUpdatedAt": "23/11/2026 21:28:36",
+   "fetchedAt": "2026-11-23T19:18:15.827Z",
    "origin": "live",
    "items": [
     {
      "group": "Vàng 24K",
      "name": "Vàng 999.9",
-     "buy": 11950000,
-     "sell": 12130000,
+     "buy": 12130000,
+     "sell": 12310000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng Nhẫn Khâu 98",
-     "buy": 11610000,
-     "sell": 11770000,
+     "buy": 11790000,
+     "sell": 11950000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng Nhẫn Khâu 97 ( Quảng Nam )",
+     "buy": 11620000,
+     "sell": 11780000,
+     "convert": 0
+    },
+    {
+     "group": "Vàng 24K",
+     "name": "Vàng Nhẫn Khâu 96",
      "buy": 11440000,
      "sell": 11600000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
-     "name": "Vàng Nhẫn Khâu 96",
-     "buy": 11260000,
-     "sell": 11420000,
-     "convert": 0
-    },
-    {
-     "group": "Vàng 24K",
      "name": "Nữ trang 980",
-     "buy": 11620000,
-     "sell": 11950000,
+     "buy": 11800000,
+     "sell": 12130000,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng NL Ngoài 9999",
-     "buy": 11880000,
+     "buy": 12060000,
      "sell": 0,
      "convert": 0
     },
     {
      "group": "Vàng 24K",
      "name": "Vàng NL Ngoài 999",
-     "buy": 11830000,
+     "buy": 12010000,
      "sell": 0,
      "convert": 0
     },
@@ -4754,15 +4754,15 @@
     {
      "group": "BẠC",
      "name": "Bạc Thỏi Phát Lộc (1 kilo)",
-     "buy": 38930000,
-     "sell": 41470000,
+     "buy": 40000000,
+     "sell": 42530000,
      "convert": 0
     },
     {
      "group": "BẠC",
      "name": "Bạc Miếng Phát Lộc ( 1 Lượng )",
-     "buy": 1465000,
-     "sell": 1560000,
+     "buy": 1505000,
+     "sell": 1600000,
      "convert": 0
     },
     {
